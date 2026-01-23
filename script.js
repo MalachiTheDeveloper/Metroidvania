@@ -1,4 +1,3 @@
-//canvas and block setup
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 canvas.width = innerWidth;
@@ -358,13 +357,13 @@ class Player {
         if(this.sceneChangeAnimationFrame === 50 && this.sceneChangeDir === "up"){
             this.x = this.sceneReenter.x;
             this.y = this.sceneReenter.y;
-            this.velocity.y = -blockSize / 2.85;
+            this.velocity.y = -blockSize / 2.80;
             this.immobilityFrames = 60;
             this.inAir = 1;
             this.jumping = 0;
         }
         if(this.sceneChangeAnimationFrame >= 50 && this.sceneChangeAnimationFrame <= 68 && this.sceneChangeDir === "up"){
-            this.velocity.x = blockSize / 9;
+            this.velocity.x = blockSize / 9.3;
         }
         if(this.sceneChangeAnimationFrame === 75 && this.sceneChangeDir !== "up"){
             this.immobilityFrames = 0;

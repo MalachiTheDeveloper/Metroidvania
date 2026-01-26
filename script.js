@@ -1,12 +1,12 @@
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
-canvas.width = innerWidth;
-canvas.height = innerHeight;
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 let blockSize;
-if(innerWidth < innerHeight){
-    blockSize = Math.round(innerHeight / 25);
+if(window.innerWidth < window.innerHeight){
+    blockSize = Math.round(window.innerHeight / 25);
 } else{
-    blockSize = Math.round(innerWidth / 25);
+    blockSize = Math.round(window.innerWidth / 25);
 }
 
 let key = {
@@ -471,11 +471,34 @@ function moveCamera(){
     camera.y = Math.round(camera.y);
 }
 
-function resetLevel(){
+let lastInnerWidth = window.innerWidth;
+let lastInnerHeight = window.innerHeight;
+
+function resizeCanvas(){
+    if(lastInnerWidth !== window.innerWidth || lastInnerHeight !== window.innerHeight){
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        if(window.innerWidth < window.innerHeight){
+            blockSize = Math.round(window.innerHeight / 25);
+        } else{
+            blockSize = Math.round(window.innerWidth / 25);
+        }
+        rebuildLevel();
+        moveCamera();
+    }
+    lastInnerWidth = window.innerWidth;
+    lastInnerHeight = window.innerHeight;
+}
+
+function rebuildLevel(){
     clearBlocks();
     createBlocks();
     levelWidth = levels[currentLevel].map[0].length * blockSize;
     levelHeight = levels[currentLevel].map.length * blockSize;
+}
+
+function resetLevel(){
+    rebuildLevel();
     camera.x += player.x - (canvas.width / 2) + (player.width / 2) - camera.x;
     camera.y += player.y - (canvas.height / 2) + (player.height / 2) - camera.y;
     moveCamera();
@@ -484,6 +507,7 @@ function resetLevel(){
 function gameLoop(){
     requestAnimationFrame(gameLoop);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    resizeCanvas();
     moveCamera();
     updateBlocks();
     drawBlocks();
@@ -580,4 +604,4 @@ window.addEventListener("keyup", (e) => {
 
 document.addEventListener('contextmenu', (e) => {
     e.preventDefault();
-})
+});

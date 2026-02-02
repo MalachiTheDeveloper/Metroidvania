@@ -1,13 +1,9 @@
+
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-let blockSize;
-if(window.innerWidth < window.innerHeight){
-    blockSize = Math.round(window.innerHeight / 25);
-} else{
-    blockSize = Math.round(window.innerWidth / 25);
-}
+canvas.width = innerWidth;
+canvas.height = innerHeight;
+let blockSize = Math.round(((innerWidth + innerHeight) / 2) / 20);
 
 let key = {
     left: false,
@@ -99,9 +95,9 @@ let levels = {
             "bb                             |",
             "bb                              ",
             "bb                              ",
-            "bbb    bbbb                     ",
-            "bb   bbb  bbb                bbb",
-            "bb                          bbbb",
+            "bbb    bbb                      ",
+            "bb   bbb bbb    bbbb         bbb",
+            "bb         bbbbbb           bbbb",
             "bb                         bbbbb",
             "bbbbbbbbbbbbbbbbbb     bbbbbbbbb",
             "bbbbbbbbbbbbbbbbbb|    bbbbbbbbb",
@@ -357,18 +353,27 @@ class Player {
         if(this.sceneChangeAnimationFrame === 50 && this.sceneChangeDir === "up"){
             this.x = this.sceneReenter.x;
             this.y = this.sceneReenter.y;
-            this.velocity.y = -blockSize / 2.80;
+            this.velocity.y = -blockSize / 2.85;
             this.immobilityFrames = 60;
             this.inAir = 1;
             this.jumping = 0;
         }
         if(this.sceneChangeAnimationFrame >= 50 && this.sceneChangeAnimationFrame <= 68 && this.sceneChangeDir === "up"){
-            this.velocity.x = blockSize / 9.3;
+            this.velocity.x = blockSize / 9;
         }
         if(this.sceneChangeAnimationFrame === 75 && this.sceneChangeDir !== "up"){
             this.immobilityFrames = 0;
         }
     }
+    resetPhysics(){
+        this.gravity = 90;
+        this.acceleration = blockSize / 90;
+        this.maxSpeed = blockSize / 8;
+        this.friction = 0.8;
+        this.airResistance = 0.98;
+        this.maxGravity = blockSize / 3;
+        this.maxJumpDuration = 15;
+    };
 }
 const player = new Player(blockSize * 3, blockSize * 3, blockSize, blockSize*2)
 
@@ -471,23 +476,19 @@ function moveCamera(){
     camera.y = Math.round(camera.y);
 }
 
-let lastInnerWidth = window.innerWidth;
-let lastInnerHeight = window.innerHeight;
-
 function resizeCanvas(){
-    if(lastInnerWidth !== window.innerWidth || lastInnerHeight !== window.innerHeight){
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        if(window.innerWidth < window.innerHeight){
-            blockSize = Math.round(window.innerHeight / 25);
-        } else{
-            blockSize = Math.round(window.innerWidth / 25);
-        }
-        rebuildLevel();
-        moveCamera();
-    }
-    lastInnerWidth = window.innerWidth;
-    lastInnerHeight = window.innerHeight;
+    let x = player.x / blockSize;
+    let y = player.y / blockSize;
+    canvas.width = innerWidth;
+    canvas.height = innerHeight;
+    blockSize = Math.round(((innerWidth + innerHeight) / 2) / 20);
+    rebuildLevel();
+    player.width = blockSize;
+    player.height = blockSize * 2;
+    player.x = x * blockSize;
+    player.y = y * blockSize;
+    player.resetPhysics();
+    moveCamera();
 }
 
 function rebuildLevel(){
@@ -507,7 +508,6 @@ function resetLevel(){
 function gameLoop(){
     requestAnimationFrame(gameLoop);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    resizeCanvas();
     moveCamera();
     updateBlocks();
     drawBlocks();
@@ -604,4 +604,7 @@ window.addEventListener("keyup", (e) => {
 
 document.addEventListener('contextmenu', (e) => {
     e.preventDefault();
-});
+})
+window.addEventListener('resize', () => {
+    resizeCanvas();
+})

@@ -163,6 +163,9 @@ class Player {
         this.width = width;
         this.height = height; 
 
+        this.lives = 5;
+        this.maxLives = 5;
+
         this.inAir = 99;
         this.jumpBuffer = 0;
         this.jumping = 100;
@@ -437,6 +440,17 @@ function handleCurtains(){
     ctx.globalAlpha = 1; 
 }
 
+function drawHPReporter () {
+    for(let i = 0; i < player.maxLives; i++){
+        ctx.fillStyle = "rgb(68, 68, 68)";
+        ctx.fillRect(blockSize * 0.75 + i * blockSize, blockSize * 0.75, blockSize * 0.75, blockSize * 0.75)
+    }
+    for(let i = 0; i < player.lives; i++){
+        ctx.fillStyle = "rgb(255, 0, 0)";
+        ctx.fillRect(blockSize * 0.75 + i * blockSize, blockSize * 0.75, blockSize * 0.75, blockSize * 0.75)
+    }
+}
+
 function drawBlocks(){
     for(let i = 0; i < blocks.length; i++){
         blocks[i].draw();
@@ -521,6 +535,7 @@ function gameLoop(){
     moveCamera();
     updateBlocks();
     drawBlocks();
+    drawHPReporter();
     handleCurtains();
 }
 resetLevel();

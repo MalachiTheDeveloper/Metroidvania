@@ -67,7 +67,7 @@ let levels = {
         ]
     },
     1: {
-        sceneChanges: [[1, 3, 0, 31, 16, "left"], [1, 4, 2, 0, 14, "right"],[5, 1, 5, 7, -1, "down"]],
+        sceneChanges: [[1, 3, 0, 31, 16, "left"], [1, 4, 2, 0, 14, "right"],[6, 1, 5, 7.5, -1, "down"]],
         map: [
             "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
             "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
@@ -96,11 +96,11 @@ let levels = {
             "bb                              ",
             "bb                              ",
             "bbb    bbb                      ",
-            "bb   bbb bbb    bbbb         bbb",
-            "bb         bbbbbb           bbbb",
+            "bb   bbb bbb                 bbb",
+            "bb         bbb              bbbb",
             "bb                         bbbbb",
-            "bbbbbbbbbbbbbbbbbb     bbbbbbbbb",
-            "bbbbbbbbbbbbbbbbbb|    bbbbbbbbb",
+            "bbbbbbbbbbbbbbbbb      bbbbbbbbb",
+            "bbbbbbbbbbbbbbbbb|     bbbbbbbbb",
         ]
     },
     2: {
@@ -127,28 +127,28 @@ let levels = {
         ]
     },
     5: {
-        sceneChanges: [[5, 1, 1, 20, 32, "up"]],
+        sceneChanges: [[6, 1, 1, 20, 32, "up", 19]],
         map: [
-            "bbbbb|    bbbbbbbbbbbbbbbbbbbbbb",
-            "bbbbb     bbbbbbbbbbbbbbbbbbbbbb",
+            "bbbbb|     bbbbbbbbbbbbbbbbbbbbb",
+            "bbbbb      bbbbbbbbbbbbbbbbbbbbb",
             "bb                            bb",
             "bb                            bb",
             "bb                            bb",
-            "bb   bbbbb                    bb",
+            "bb   bbbbbb                   bb",
             "bb                            bb",
             "bb                            bb",
             "bb                            bb",
+            "bb           bbbb             bb",
             "bb                            bb",
             "bb                            bb",
+            "bb                  bbbb      bb",
             "bb                            bb",
             "bb                            bb",
+            "bb             bbbb           bb",
             "bb                            bb",
             "bb                            bb",
-            "bb                            bb",
-            "bb                            bb",
-            "bb                            bb",
-            "bb                            bb",
-            "bb                            bb",
+            "bb        b                   bb",
+            "bb       bbb                  bb",
             "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
             "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
         ]
@@ -182,6 +182,7 @@ class Player {
 
         this.immobilityFrames = 0;
         this.freezeFrames = 0;
+        this.dir = "right";
 
         this.canChangeScene = true;
 
@@ -206,12 +207,14 @@ class Player {
             if(this.velocity.x < -this.maxSpeed){
                 this.velocity.x = -this.maxSpeed;
             }
+            this.dir = "left";
         }
         if(key.d && this.immobilityFrames < 1){
             this.velocity.x += this.acceleration;
             if(this.velocity.x > this.maxSpeed){
                 this.velocity.x = this.maxSpeed;
             }
+            this.dir = "right";
         }
         
         if(this.immobilityFrames > 1 || ((!(key.a || key.d)) || (key.a && key.d))){
@@ -323,6 +326,9 @@ class Player {
         if(this.sceneChangeAnimationFrame === 20){
             this.sceneReenter.x = blockSize * levels[currentLevel].sceneChanges[this.activeExit][3];
             this.sceneReenter.y = blockSize * levels[currentLevel].sceneChanges[this.activeExit][4];
+            if(this.sceneChangeDir === "up" && player.dir === "left"){
+                this.sceneReenter.x = blockSize * levels[currentLevel].sceneChanges[this.activeExit][6];
+            }
             this.x = this.sceneReenter.x;
             this.y = this.sceneReenter.y;
             this.velocity.x = 0; 
@@ -359,7 +365,11 @@ class Player {
             this.jumping = 0;
         }
         if(this.sceneChangeAnimationFrame >= 50 && this.sceneChangeAnimationFrame <= 68 && this.sceneChangeDir === "up"){
-            this.velocity.x = blockSize / 9;
+            if(player.dir === "right"){
+                this.velocity.x = blockSize / 9;
+            } else if(player.dir === "left"){
+                this.velocity.x = -blockSize / 9;
+            }
         }
         if(this.sceneChangeAnimationFrame === 75 && this.sceneChangeDir !== "up"){
             this.immobilityFrames = 0;

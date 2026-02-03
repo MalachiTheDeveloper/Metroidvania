@@ -24,12 +24,15 @@ let camera = {
 
 let blocks = [];
 let exits = [];
+let lava = [];
+let anchors = [];
 
 let currentLevel = 1;
 let levelWidth = 0;
 let levelHeight = 0;
 let levels = {
     0: {
+        anchorWidths: [],
         sceneChanges: [[1, 3, 1, 0, 16, "right"]],
         map: [
             "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
@@ -67,6 +70,7 @@ let levels = {
         ]
     },
     1: {
+        anchorWidths: [],
         sceneChanges: [[1, 3, 0, 31, 16, "left"], [1, 4, 2, 0, 14, "right"],[6, 1, 5, 7.5, -1, "down"]],
         map: [
             "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
@@ -105,6 +109,7 @@ let levels = {
     },
     2: {
         sceneChanges: [[1, 3, 1, 31, 25, "left"]],
+        anchorWidths: [3, 3],
         map: [
             "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
             "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
@@ -116,18 +121,19 @@ let levels = {
             "bb                            bb",
             "bb                            bb",
             "bb                            bb",
-            "bb                            bb",
+            "bb         _       _          bb",
             "bb         bbb     bbb        bb",
             "bb        bb         bb       bb",
-            "|        bb           bb      bb",
-            "        bbb           bbb     bb",
-            "       bbbb           bbbb    bb",
+            "|        bbblllllllllbbb      bb",
+            "        bbbblllllllllbbbb     bb",
+            "       bbbbblllllllllbbbbb    bb",
             "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
             "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
         ]
     },
     5: {
         sceneChanges: [[6, 1, 1, 20, 32, "up", 19]],
+        anchorWidths: [],
         map: [
             "bbbbb|     bbbbbbbbbbbbbbbbbbbbb",
             "bbbbb      bbbbbbbbbbbbbbbbbbbbb",
@@ -403,6 +409,32 @@ class Block {
     }
 }
 
+class Lava {
+    constructor(x, y, width, height){
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height; 
+    } 
+    draw(){
+        ctx.fillStyle = "rgb(255, 0, 0)";
+        ctx.fillRect(this.x - camera.x, this.y - camera.y, this.width, this.height);
+    }
+}
+
+class Anchor {
+    constructor(x, y, width, height){
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height; 
+    } 
+    draw(){
+        ctx.fillStyle = "rgb(200, 200, 200)";
+        ctx.fillRect(this.x - camera.x, this.y - camera.y, this.width, this.height);
+    }
+}
+
 class Exit {
     constructor(x, y, width, height){
         this.x = x;
@@ -455,6 +487,12 @@ function drawBlocks(){
     for(let i = 0; i < blocks.length; i++){
         blocks[i].draw();
     }
+    for(let i = 0; i < lava.length; i++){
+        lava[i].draw();
+    }
+    for(let i = 0; i < anchors.length; i++){
+        anchors[i].draw();
+    }
     player.draw();
 }
 function updateBlocks(){
@@ -463,10 +501,18 @@ function updateBlocks(){
 
 function createBlocks(){
     let exitIndex = 0;
+    let anchorIndex = 0;
     for(let i = 0; i < levels[currentLevel].map.length; i++){
         for(let j = 0; j < levels[currentLevel].map[i].length; j++){
             if(levels[currentLevel].map[i][j] === "b"){
                 blocks.push(new Block(j * blockSize, i * blockSize, blockSize, blockSize));
+            }
+            if(levels[currentLevel].map[i][j] === "l"){
+                lava.push(new Lava(j * blockSize, i * blockSize, blockSize, blockSize));
+            }
+            if(levels[currentLevel].map[i][j] === "_"){
+                anchors.push(new Anchor(j * blockSize, i * blockSize, blockSize * levels[currentLevel].anchorWidths[anchorIndex], blockSize));
+                anchorIndex++;
             }
             if(levels[currentLevel].map[i][j] === "|"){
                 exits.push(new Exit(j * blockSize, i * blockSize, blockSize * levels[currentLevel].sceneChanges[exitIndex][0], blockSize * levels[currentLevel].sceneChanges[exitIndex][1]));
@@ -479,6 +525,8 @@ function createBlocks(){
 function clearBlocks(){
     exits = [];
     blocks = [];
+    lava = [];
+    anchors = [];
 }
 
 function moveCamera(){
@@ -552,6 +600,15 @@ function isColliding(first, second){
 function checkBlockCollisions(object){
     for(let i = 0; i < blocks.length; i++){
         if(isColliding(object, blocks[i])){
+            return true;
+        }
+    }
+    return false;
+}
+
+function checkLavaCollisions(object){
+    for(let i = 0; i < lava.length; i++){
+        if(isColliding(object, lava[i])){
             return true;
         }
     }

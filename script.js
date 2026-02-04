@@ -32,7 +32,7 @@ let levelWidth = 0;
 let levelHeight = 0;
 let levels = {
     0: {
-        anchorWidths: [],
+        anchorWidths: [3,3,3,3,3],
         sceneChanges: [[1, 3, 1, 0, 16, "right"]],
         map: [
             "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
@@ -52,7 +52,7 @@ let levels = {
             "bb                            bb",
             "bb                             |",
             "bb                              ",
-            "bb                              ",
+            "bb                          _   ",
             "bb                          bbbb",
             "bb                         bbbbb",
             "bb                        bbbbbb",
@@ -64,14 +64,14 @@ let levels = {
             "bb                  bbbbbbbbbbbb",
             "bb                 bbbbbbbbbbbbb",
             "bb                bbbbbbbbbbbbbb",
-            "bb               bbbbbbbbbbbbbbb",
+            "bb_   _   _   _  bbbbbbbbbbbbbbb",
             "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
             "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
         ]
     },
     1: {
-        anchorWidths: [],
-        sceneChanges: [[1, 3, 0, 31, 16, "left"], [1, 4, 2, 0, 14, "right"],[6, 1, 5, 7.5, -1, "down"]],
+        anchorWidths: [4, 3, 3, 1, 3, 2, 2, 2, 2, 3, 3, 3, 3, 4],
+        sceneChanges: [[1, 3, 0, 31, 16, "left"], [1, 4, 2, 0, 15, "right"],[6, 1, 5, 7.5, -1, "down"]],
         map: [
             "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
             "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
@@ -90,45 +90,50 @@ let levels = {
             "bb                            bb",
             "|                             bb",
             "                              bb",
-            "                              bb",
-            "bbbbb                         bb",
+            " _                            bb",
+            "bbbbb     _                   bb",
             "bb        bbb                 bb",
             "bb                            bb",
-            "bb                            bb",
+            "bb   _                        bb",
             "bb   bbb                      bb",
             "bb                             |",
             "bb                              ",
-            "bb                              ",
-            "bbb    bbb                      ",
-            "bb   bbb bbb                 bbb",
+            "bb_    _                        ",
+            "bbb  _ bbb_                  _  ",
+            "bb   bbb bbb_                bbb",
             "bb         bbb              bbbb",
-            "bb                         bbbbb",
+            "bb_   _   _   _        _   bbbbb",
             "bbbbbbbbbbbbbbbbb      bbbbbbbbb",
             "bbbbbbbbbbbbbbbbb|     bbbbbbbbb",
         ]
     },
     2: {
         sceneChanges: [[1, 3, 1, 31, 25, "left"]],
-        anchorWidths: [3, 3],
+        anchorWidths: [3, 3, 6, 4],
         map: [
-            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-            "bb                            bb",
-            "bb                            bb",
-            "bb                            bb",
-            "bb                            bb",
-            "bb         _       _          bb",
-            "bb         bbb     bbb        bb",
-            "bb        bb         bb       bb",
-            "|        bbblllllllllbbb      bb",
-            "        bbbblllllllllbbbb     bb",
-            "       bbbbblllllllllbbbbb    bb",
-            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "bb                            bbbbbbb",
+            "bb                            bbbbbbb",
+            "bb                            bbbbbbb",
+            "bb                            bbbbbbb",
+            "bb         _       _          bbbbbbb",
+            "bb         bbb     bbb        bbbbbbb",
+            "bb        bb         bb       bbbbbbb",
+            "|        bbblllllllllbbb      bbbbbbb",
+            "        bbbblllllllllbbbb     bbbbbbb",
+            " _     bbbbblllllllllbbbbb_   bbbbbbb",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
         ]
     },
     5: {
@@ -153,8 +158,10 @@ let levels = {
             "bb             bbbb           bb",
             "bb                            bb",
             "bb                            bb",
-            "bb        b                   bb",
-            "bb       bbb                  bb",
+            "bb                            bb",
+            "bb         b                  bb",
+            "bb        bbb                 bb",
+            "bb       bbbbb                bb",
             "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
             "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
         ]
@@ -202,6 +209,16 @@ class Player {
         this.sceneChangeAnimationFrame = 10000000000000000;
         this.sceneChangeDir = "left";
         this.activeExit = null;
+
+        this.anchor = {
+            x: this.x,
+            y: this.y
+        }
+        this.spawnPoint = {
+            x: this.x,
+            y: this.y,
+            level: currentLevel
+        }
     } 
     draw(){
         ctx.fillStyle = "red";
@@ -300,7 +317,25 @@ class Player {
             this.inAir = Infinity;
             this.jumping = Infinity;
         }
-
+        this.handleHazardCollisions();
+        this.handleSceneChanges();
+    }
+    handleHazardCollisions(){
+        let anchorCollision = checkAnchorCollisions(this);
+        if(anchorCollision !== null){
+            this.anchor.x = anchors[anchorCollision].x + anchors[anchorCollision].width / 2 - (player.width / 2);
+            this.anchor.y = anchors[anchorCollision].y - blockSize;
+        }
+        if(checkLavaCollisions(this)){
+            this.lives--;
+            this.x = this.anchor.x;
+            this.y = this.anchor.y;
+            this.immobilityFrames = 30;
+            this.velocity.x = 0;
+            this.velocity.y = 0;
+        }
+    }
+    handleSceneChanges(){
         let exitID = checkExitCollisions(this);
         if(exitID !== null && this.canChangeScene){
             this.activeExit = exitID;
@@ -423,11 +458,12 @@ class Lava {
 }
 
 class Anchor {
-    constructor(x, y, width, height){
+    constructor(x, y, width, height, id){
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height; 
+        this.id = id;
     } 
     draw(){
         ctx.fillStyle = "rgb(200, 200, 200)";
@@ -490,9 +526,12 @@ function drawBlocks(){
     for(let i = 0; i < lava.length; i++){
         lava[i].draw();
     }
+    //uncomment the following to test anchor positions
+    /*
     for(let i = 0; i < anchors.length; i++){
         anchors[i].draw();
     }
+    */
     player.draw();
 }
 function updateBlocks(){
@@ -511,7 +550,7 @@ function createBlocks(){
                 lava.push(new Lava(j * blockSize, i * blockSize, blockSize, blockSize));
             }
             if(levels[currentLevel].map[i][j] === "_"){
-                anchors.push(new Anchor(j * blockSize, i * blockSize, blockSize * levels[currentLevel].anchorWidths[anchorIndex], blockSize));
+                anchors.push(new Anchor(j * blockSize, i * blockSize, blockSize * levels[currentLevel].anchorWidths[anchorIndex], blockSize, anchorIndex));
                 anchorIndex++;
             }
             if(levels[currentLevel].map[i][j] === "|"){
@@ -613,6 +652,15 @@ function checkLavaCollisions(object){
         }
     }
     return false;
+}
+
+function checkAnchorCollisions(object){
+    for(let i = 0; i < anchors.length; i++){
+        if(isColliding(object, anchors[i])){
+            return anchors[i].id;
+        }
+    }
+    return null;
 }
 
 function checkExitCollisions(object){

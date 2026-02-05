@@ -334,6 +334,13 @@ class Player {
             this.velocity.x = 0;
             this.velocity.y = 0;
         }
+        if(!this.lives > 0){
+            this.x = this.spawnPoint.x;
+            this.y = this.spawnPoint.y;
+            currentLevel = this.spawnPoint.level;
+            this.lives = this.maxLives;
+            resetLevel();
+        }
     }
     handleSceneChanges(){
         let exitID = checkExitCollisions(this);

@@ -27,7 +27,7 @@ let exits = [];
 let lava = [];
 let anchors = [];
 
-let currentLevel = 1;
+let currentLevel = 0;
 let levelWidth = 0;
 let levelHeight = 0;
 let levels = {
@@ -335,6 +335,7 @@ class Player {
             this.velocity.y = 0;
         }
         if(!this.lives > 0){
+            this.immobilityFrames = 80;
             this.x = this.spawnPoint.x;
             this.y = this.spawnPoint.y;
             currentLevel = this.spawnPoint.level;
@@ -436,7 +437,7 @@ class Player {
         this.maxJumpDuration = 15;
     };
 }
-const player = new Player(blockSize * 3, blockSize * 3, blockSize, blockSize*2)
+const player = new Player(blockSize * 5, blockSize * 28, blockSize, blockSize*2)
 
 class Block {
     constructor(x, y, width, height){
@@ -597,6 +598,10 @@ function moveCamera(){
 function resizeCanvas(){
     let x = player.x / blockSize;
     let y = player.y / blockSize;
+    let anchorX = player.anchor.x / blockSize;
+    let anchorY = player.anchor.y / blockSize;
+    let spawnX = player.spawnPoint.x / blockSize;
+    let spawnY = player.spawnPoint.y / blockSize;
     canvas.width = innerWidth;
     canvas.height = innerHeight;
     blockSize = Math.round(((innerWidth + innerHeight) / 2) / 20);
@@ -605,6 +610,10 @@ function resizeCanvas(){
     player.height = blockSize * 2;
     player.x = x * blockSize;
     player.y = y * blockSize;
+    player.anchor.x = anchorX * blockSize;
+    player.anchor.y = anchorY * blockSize;
+    player.spawnPoint.x = spawnX * blockSize;
+    player.spawnPoint.y = spawnY * blockSize;
     player.resetPhysics();
     moveCamera();
 }

@@ -204,7 +204,9 @@ class Player {
 
         this.sceneReenter = {
             x: 0,
-            y: 0
+            y: 0,
+            targetX: 0,
+            targetFrame: 0
         }
         this.sceneChangeAnimationFrame = 10000000000000000;
         this.sceneChangeDir = "left";
@@ -349,7 +351,7 @@ class Player {
             this.activeExit = exitID;
             this.immobilityFrames = Infinity;
             this.sceneChangeAnimationFrame = 0;
-            if(levels[currentLevel].sceneChanges[this.activeExit][5] === "left" || levels[currentLevel].sceneChanges[this.activeExit][5] === "right"){
+            if(levels[currentLevel].sceneChanges[this.activeExit][5] === "left"){
                 this.velocity.x = 0;
             }
             this.canChangeScene = false;
@@ -392,17 +394,22 @@ class Player {
             resetLevel();
             if(this.sceneChangeDir === "down" || this.sceneChangeDir === "up"){
                 this.freezeFrames = 30;
-            }
-            if(this.sceneChangeDir === "down" || this.sceneChangeDir === "up"){
                 this.velocity.x = 0;
             }
-        }
-        if(this.sceneChangeAnimationFrame > 40 && this.sceneChangeAnimationFrame < 70){
             if(this.sceneChangeDir === "left"){
-                this.x -= blockSize / 15;
+                this.sceneReenter.targetX = this.x - blockSize * 2;
+                this.sceneReenter.targetFrame = 0;
             }
             if(this.sceneChangeDir === "right"){
-                this.x += blockSize / 15;
+                this.sceneReenter.targetX = this.x + blockSize * 2;
+                this.sceneReenter.targetFrame = 0;
+            }
+        }
+        if(this.sceneChangeAnimationFrame > 40 && this.sceneChangeAnimationFrame <= 70){
+            if(this.sceneChangeDir === "left" || this.sceneChangeDir === "right"){
+                let amountMoved = ((this.sceneReenter.targetX) - this.x) / (30 - this.sceneReenter.targetFrame);
+                this.x += amountMoved;
+                this.sceneReenter.targetFrame++;
             }
         }
         if(this.sceneChangeAnimationFrame === 50 && this.sceneChangeDir === "down"){
@@ -423,7 +430,7 @@ class Player {
                 this.velocity.x = -blockSize / 9;
             }
         }
-        if(this.sceneChangeAnimationFrame === 75 && this.sceneChangeDir !== "up"){
+        if(this.sceneChangeAnimationFrame === 70 && this.sceneChangeDir !== "up"){
             this.immobilityFrames = 0;
         }
     }

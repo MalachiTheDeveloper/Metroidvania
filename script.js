@@ -351,7 +351,7 @@ class Player {
             this.activeExit = exitID;
             this.immobilityFrames = Infinity;
             this.sceneChangeAnimationFrame = 0;
-            if(levels[currentLevel].sceneChanges[this.activeExit][5] === "left"){
+            if(levels[currentLevel].sceneChanges[this.activeExit][5] === "left" || levels[currentLevel].sceneChanges[this.activeExit][5] === "right"){
                 this.velocity.x = 0;
             }
             this.canChangeScene = false;

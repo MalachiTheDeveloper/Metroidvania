@@ -32,46 +32,46 @@ let levelWidth = 0;
 let levelHeight = 0;
 let levels = {
     0: {
-        anchorWidths: [3,3,3,3,3],
+        anchorWidths: [4,3,3,3,3],
         sceneChanges: [[1, 3, 1, 0, 16, "right"]],
         map: [
-            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-            "bb                            bb",
-            "bb                            bb",
-            "bb                            bb",
-            "bb                            bb",
-            "bb                            bb",
-            "bb                            bb",
-            "bb                            bb",
-            "bb                            bb",
-            "bb                            bb",
-            "bb                            bb",
-            "bb                            bb",
-            "bb                            bb",
-            "bb                            bb",
-            "bb                             |",
-            "bb                              ",
-            "bb                          _   ",
-            "bb                          bbbb",
-            "bb                         bbbbb",
-            "bb                        bbbbbb",
-            "bb                       bbbbbbb",
-            "bb                      bbbbbbbb",
-            "bb                     bbbbbbbbb",
-            "bb                    bbbbbbbbbb",
-            "bb                   bbbbbbbbbbb",
-            "bb                  bbbbbbbbbbbb",
-            "bb                 bbbbbbbbbbbbb",
-            "bb                bbbbbbbbbbbbbb",
-            "bb_   _   _   _  bbbbbbbbbbbbbbb",
-            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "bb                            bbb",
+            "bb                            bbb",
+            "bb                            bbb",
+            "bb                            bbb",
+            "bb                            bbb",
+            "bb                            bbb",
+            "bb                            bbb",
+            "bb                            bbb",
+            "bb                            bbb",
+            "bb                            bbb",
+            "bb                            bbb",
+            "bb                            bbb",
+            "bb                            bbb",
+            "bb                              |",
+            "bb                               ",
+            "bb                          _    ",
+            "bb                          bbbbb",
+            "bb                         bbbbbb",
+            "bb                        bbbbbbb",
+            "bb                       bbbbbbbb",
+            "bb                      bbbbbbbbb",
+            "bb                     bbbbbbbbbb",
+            "bb                    bbbbbbbbbbb",
+            "bb                   bbbbbbbbbbbb",
+            "bb                  bbbbbbbbbbbbb",
+            "bb                 bbbbbbbbbbbbbb",
+            "bb                bbbbbbbbbbbbbbb",
+            "bb_   _   _   _  bbbbbbbbbbbbbbbb",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
         ]
     },
     1: {
         anchorWidths: [4, 3, 3, 1, 3, 2, 2, 2, 2, 3, 3, 3, 3, 4],
-        sceneChanges: [[1, 3, 0, 31, 16, "left"], [1, 4, 2, 0, 15, "right"],[6, 1, 5, 7.5, -1, "down"]],
+        sceneChanges: [[1, 3, 0, 32, 16, "left"], [1, 4, 2, 0, 15, "right"],[6, 1, 5, 7.5, -1, "down"]],
         map: [
             "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
             "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
@@ -204,9 +204,7 @@ class Player {
 
         this.sceneReenter = {
             x: 0,
-            y: 0,
-            targetX: 0,
-            targetFrame: 0
+            y: 0
         }
         this.sceneChangeAnimationFrame = 10000000000000000;
         this.sceneChangeDir = "left";
@@ -361,11 +359,11 @@ class Player {
         }
         if(this.sceneChangeAnimationFrame > 0 && this.sceneChangeAnimationFrame < 15){
             if(levels[currentLevel].sceneChanges[this.activeExit][5] === "left"){
-                this.x -= blockSize / 10;
+                this.x -= this.maxSpeed;
                 this.sceneChangeDir = "left";
             }
             if(levels[currentLevel].sceneChanges[this.activeExit][5] === "right"){
-                this.x += blockSize / 10;
+                this.x += this.maxSpeed;
                 this.sceneChangeDir = "right";
             }
             if(levels[currentLevel].sceneChanges[this.activeExit][5] === "up"){
@@ -396,20 +394,14 @@ class Player {
                 this.freezeFrames = 30;
                 this.velocity.x = 0;
             }
-            if(this.sceneChangeDir === "left"){
-                this.sceneReenter.targetX = this.x - blockSize * 2;
-                this.sceneReenter.targetFrame = 0;
-            }
-            if(this.sceneChangeDir === "right"){
-                this.sceneReenter.targetX = this.x + blockSize * 2;
-                this.sceneReenter.targetFrame = 0;
-            }
         }
         if(this.sceneChangeAnimationFrame > 40 && this.sceneChangeAnimationFrame <= 70){
             if(this.sceneChangeDir === "left" || this.sceneChangeDir === "right"){
-                let amountMoved = ((this.sceneReenter.targetX) - this.x) / (30 - this.sceneReenter.targetFrame);
-                this.x += amountMoved;
-                this.sceneReenter.targetFrame++;
+                let amountMoved = this.maxSpeed;
+                if(this.sceneChangeDir === "left"){
+                    amountMoved = -amountMoved;
+                }
+                this.velocity.x = amountMoved;
             }
         }
         if(this.sceneChangeAnimationFrame === 50 && this.sceneChangeDir === "down"){

@@ -5,7 +5,9 @@ canvas.width = innerWidth;
 canvas.height = innerHeight;
 let blockSize = Math.round(((innerWidth + innerHeight) / 2) / 20);
 
-let key = {
+let controls = {
+    click: false,
+    rightClick: false,
     left: false,
     right: false,
     up: false,
@@ -210,6 +212,11 @@ class Player {
         this.sceneChangeDir = "left";
         this.activeExit = null;
 
+        this.abilities = ["dash"];
+        this.canUseDashKey = true;
+        this.canDash = true;
+        this.dashFrames = 0;
+
         this.anchor = {
             x: this.x,
             y: this.y
@@ -227,57 +234,85 @@ class Player {
     update(){
         this.immobilityFrames--;
         this.freezeFrames--;
+        this.dashFrames--;
         this.sceneChangeAnimationFrame++;
-        if(key.a && this.immobilityFrames < 1){
-            this.velocity.x -= this.acceleration;
-            if(this.velocity.x < -this.maxSpeed){
-                this.velocity.x = -this.maxSpeed;
-            }
-            this.dir = "left";
-        }
-        if(key.d && this.immobilityFrames < 1){
-            this.velocity.x += this.acceleration;
-            if(this.velocity.x > this.maxSpeed){
-                this.velocity.x = this.maxSpeed;
-            }
-            this.dir = "right";
-        }
-        
-        if(this.immobilityFrames > 1 || ((!(key.a || key.d)) || (key.a && key.d))){
-            if(this.inAir === 0){
-                this.velocity.x *= this.friction;
-            } else {
-                this.velocity.x *= this.airResistance;
-            }
-        }
-
-        this.inAir++;
-        this.jumping++;
-        if(this.freezeFrames <= 0){
-            this.velocity.y += blockSize / this.gravity;
-            if(this.velocity.y > this.maxGravity){
-                this.velocity.y = this.maxGravity;
-            }
-        }
-
-        if((key.space && this.inAir <= 5 && this.jumpBuffer > 0 && this.immobilityFrames < 1) || (key.space && this.jumping < this.maxJumpDuration && this.immobilityFrames < 1)){
-            this.velocity.y = -blockSize / 5;
-            if(this.jumping > this.maxJumpDuration){
-                this.jumping = 0;
-            }
-        }
-
-        if(key.space){
-            this.jumpBuffer--;
-        } else{
-            if(this.jumping < this.maxJumpDuration){
-                if(this.jumping > 8){
-                    this.velocity.y *= 0.5;
+        if(this.dashFrames <= 0){
+            if(controls.a && this.immobilityFrames < 1){
+                this.velocity.x -= this.acceleration;
+                if(this.velocity.x < -this.maxSpeed){
+                    this.velocity.x = -this.maxSpeed;
                 }
-                this.jumping = 1000000;
-                this.gravity = 75;
+                this.dir = "left";
             }
-            this.jumpBuffer = 4;
+            if(controls.d && this.immobilityFrames < 1){
+                this.velocity.x += this.acceleration;
+                if(this.velocity.x > this.maxSpeed){
+                    this.velocity.x = this.maxSpeed;
+                }
+                this.dir = "right";
+            }
+            
+            if(this.immobilityFrames > 1 || ((!(controls.a || controls.d)) || (controls.a && controls.d))){
+                if(this.inAir === 0){
+                    this.velocity.x *= this.friction;
+                } else {
+                    this.velocity.x *= this.airResistance;
+                }
+            }
+
+            this.inAir++;
+            this.jumping++;
+            if(this.freezeFrames <= 0 && !((this.sceneChangeAnimationFrame < 70) && (this.sceneChangeDir === "left" || this.sceneChangeDir === "right"))){
+                this.velocity.y += blockSize / this.gravity;
+                if(this.velocity.y > this.maxGravity){
+                    this.velocity.y = this.maxGravity;
+                }
+            }
+
+            if((controls.space && this.inAir <= 5 && this.jumpBuffer > 0 && this.immobilityFrames < 1) || (controls.space && this.jumping < this.maxJumpDuration && this.immobilityFrames < 1)){
+                this.velocity.y = -blockSize / 5;
+                if(this.jumping > this.maxJumpDuration){
+                    this.jumping = 0;
+                }
+            }
+
+            if(controls.space){
+                this.jumpBuffer--;
+            } else{
+                if(this.jumping < this.maxJumpDuration){
+                    if(this.jumping > 8){
+                        this.velocity.y *= 0.5;
+                    }
+                    this.jumping = 1000000;
+                    this.gravity = 75;
+                }
+                this.jumpBuffer = 4;
+            }
+        } else{
+            if(this.dir === "left"){
+                this.velocity.x = -blockSize / 2.5;
+            }
+            if(this.dir === "right"){
+                this.velocity.x = blockSize / 2.5;
+            }
+        }
+        if(this.abilities.includes('dash') && controls.rightClick && this.canDash && this.canUseDashKey && this.immobilityFrames < 0){
+            this.dashFrames = 13;
+            this.velocity.y = 0;
+            this.canDash = false;
+        }
+        if(controls.rightClick){
+            this.canUseDashKey = false;
+        } else{
+            this.canUseDashKey = true;
+        }
+        if(this.dashFrames === 0){
+            if(this.velocity.x !== 0){
+                this.velocity.x = this.velocity.x / Math.abs(this.velocity.x) * this.maxSpeed;
+            }
+            this.inAir = Infinity;
+            this.jumping = Infinity;
+            this.velocity.y = 0;
         }
         if(this.freezeFrames < 0){
             this.x += this.velocity.x;
@@ -293,6 +328,9 @@ class Player {
                     }
                 }
                 this.velocity.x = 0;
+                if(this.dashFrames > 0){
+                    this.dashFrames = 0;
+                }
             }
             this.y += this.velocity.y;
             this.y = Math.round(this.y);
@@ -303,6 +341,7 @@ class Player {
                     }
                     this.inAir = 0;
                     this.gravity = 90;
+                    this.canDash = true;
                 } else {
                     while(checkBlockCollisions(this)){
                         this.y++;
@@ -689,64 +728,78 @@ function checkExitCollisions(object){
 
 window.addEventListener("keydown", (e) => {
     if(e.keyCode === 37){
-        key.left = true;
+        controls.left = true;
     }
     if(e.keyCode === 39){
-        key.right = true;
+        controls.right = true;
     }
     if(e.keyCode === 38){
-        key.up = true;
+        controls.up = true;
     }
     if(e.keyCode === 40){
-        key.down = true;
+        controls.down = true;
     }
     if(e.keyCode === 87){
-        key.w = true;
+        controls.w = true;
     }
     if(e.keyCode === 65){
-        key.a = true;
+        controls.a = true;
     }
     if(e.keyCode === 83){
-        key.s = true;
+        controls.s = true;
     }
     if(e.keyCode === 68){
-        key.d = true;
+        controls.d = true;
     }
     if(e.keyCode === 32){
-        key.space = true;
+        controls.space = true;
     }
 });
 
 window.addEventListener("keyup", (e) => {
     if(e.keyCode === 37){
-        key.left = false;
+        controls.left = false;
     }
     if(e.keyCode === 39){
-        key.right = false;
+        controls.right = false;
     }
     if(e.keyCode === 38){
-        key.up = false;
+        controls.up = false;
     }
     if(e.keyCode === 40){
-        key.down = false;
+        controls.down = false;
     }
     if(e.keyCode === 87){
-        key.w = false;
+        controls.w = false;
     }
     if(e.keyCode === 65){
-        key.a = false;
+        controls.a = false;
     }
     if(e.keyCode === 83){
-        key.s = false;
+        controls.s = false;
     }
     if(e.keyCode === 68){
-        key.d = false;
+        controls.d = false;
     }
     if(e.keyCode === 32){
-        key.space = false;
+        controls.space = false;
     }
 });
 
+document.addEventListener('mousedown', (e) => {
+    if(e.button === 0){
+        controls.click = true;
+    } else if(e.button === 2){
+        controls.rightClick = true;
+    }
+})
+document.addEventListener('mouseup', (e) => {
+    if(e.button === 0){
+        controls.click = false;
+    } else if(e.button === 2){
+        controls.rightClick = false;
+    }
+})
 document.addEventListener('contextmenu', (e) => {
     e.preventDefault();
 })

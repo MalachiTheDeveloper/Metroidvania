@@ -373,7 +373,7 @@ class Player {
             this.velocity.x = 0;
             this.velocity.y = 0;
         }
-        if(!this.lives > 0){
+        if(this.lives <= 0){
             this.immobilityFrames = 80;
             this.x = this.spawnPoint.x;
             this.y = this.spawnPoint.y;
@@ -727,61 +727,61 @@ function checkExitCollisions(object){
 }
 
 window.addEventListener("keydown", (e) => {
-    if(e.keyCode === 37){
+    if(e.key === "ArrowLeft"){
         controls.left = true;
     }
-    if(e.keyCode === 39){
+    if(e.key === "ArrowRight"){
         controls.right = true;
     }
-    if(e.keyCode === 38){
+    if(e.key === "ArrowUp"){
         controls.up = true;
     }
-    if(e.keyCode === 40){
+    if(e.key === "ArrowDown"){
         controls.down = true;
     }
-    if(e.keyCode === 87){
+    if(e.key === "w"){
         controls.w = true;
     }
-    if(e.keyCode === 65){
+    if(e.key === "a"){
         controls.a = true;
     }
-    if(e.keyCode === 83){
+    if(e.key === "s"){
         controls.s = true;
     }
-    if(e.keyCode === 68){
+    if(e.key === "d"){
         controls.d = true;
     }
-    if(e.keyCode === 32){
+    if(e.key === " "){
         controls.space = true;
     }
 });
 
 window.addEventListener("keyup", (e) => {
-    if(e.keyCode === 37){
+    if(e.key === "ArrowLeft"){
         controls.left = false;
     }
-    if(e.keyCode === 39){
+    if(e.key === "ArrowRight"){
         controls.right = false;
     }
-    if(e.keyCode === 38){
+    if(e.key === "ArrowUp"){
         controls.up = false;
     }
-    if(e.keyCode === 40){
+    if(e.key === "ArrowDown"){
         controls.down = false;
     }
-    if(e.keyCode === 87){
+    if(e.key === "w"){
         controls.w = false;
     }
-    if(e.keyCode === 65){
+    if(e.key === "a"){
         controls.a = false;
     }
-    if(e.keyCode === 83){
+    if(e.key === "s"){
         controls.s = false;
     }
-    if(e.keyCode === 68){
+    if(e.key === "d"){
         controls.d = false;
     }
-    if(e.keyCode === 32){
+    if(e.key === " "){
         controls.space = false;
     }
 });

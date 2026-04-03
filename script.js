@@ -216,6 +216,7 @@ class Player {
         this.canUseDashKey = true;
         this.canDash = true;
         this.dashFrames = 0;
+        this.dashCooldown = 30;
 
         this.anchor = {
             x: this.x,
@@ -235,6 +236,7 @@ class Player {
         this.immobilityFrames--;
         this.freezeFrames--;
         this.dashFrames--;
+        this.dashCooldown--;
         this.sceneChangeAnimationFrame++;
         if(this.dashFrames <= 0){
             if(controls.a && this.immobilityFrames < 1){
@@ -296,9 +298,10 @@ class Player {
                 this.velocity.x = blockSize / 2.5;
             }
         }
-        if(this.abilities.includes('dash') && controls.rightClick && this.canDash && this.canUseDashKey && this.immobilityFrames < 0){
+        if(this.abilities.includes('dash') && this.dashCooldown <= 0 && controls.rightClick && this.canDash && this.canUseDashKey && this.immobilityFrames < 0){
             this.dashFrames = 13;
             this.velocity.y = 0;
+            this.dashCooldown = 30;
             this.canDash = false;
         }
         if(controls.rightClick){
@@ -307,9 +310,7 @@ class Player {
             this.canUseDashKey = true;
         }
         if(this.dashFrames === 0){
-            if(this.velocity.x !== 0){
-                this.velocity.x = this.velocity.x / Math.abs(this.velocity.x) * this.maxSpeed;
-            }
+            this.velocity.x = this.velocity.x / Math.abs(this.velocity.x) * this.maxSpeed;
             this.inAir = Infinity;
             this.jumping = Infinity;
             this.velocity.y = 0;

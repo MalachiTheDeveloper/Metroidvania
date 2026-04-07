@@ -34,7 +34,7 @@ let levelWidth = 0;
 let levelHeight = 0;
 let levels = {
     0: {
-        anchorWidths: [4,3,3,3,3],
+        anchorWidths: [4,4,2,3,3],
         sceneChanges: [[1, 3, 1, 0, 16, "right"]],
         map: [
             "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
@@ -66,32 +66,32 @@ let levels = {
             "bb                  bbbbbbbbbbbbb",
             "bb                 bbbbbbbbbbbbbb",
             "bb                bbbbbbbbbbbbbbb",
-            "bb_   _   _   _  bbbbbbbbbbbbbbbb",
+            "bb_    _  _   _  bbbbbbbbbbbbbbbb",
             "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
             "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
         ]
     },
     1: {
-        anchorWidths: [4, 3, 3, 1, 3, 2, 2, 4, 2, 3, 3, 3, 3, 4],
+        anchorWidths: [3, 2, 5, 4, 3, 3, 1, 3, 2, 2, 4, 2, 3, 3, 3, 3, 4],
         sceneChanges: [[1, 3, 0, 32, 16, "left"], [1, 4, 2, 0, 15, "right"],[6, 1, 5, 7.5, -1, "down"]],
         map: [
             "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
             "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "bb                         b    bb",
+            "bb                         b    bb",
+            "bb                         b    bb",
+            "bb                         b    bb",
+            "bb                         b    bb",
+            "bb                         b    bb",
+            "bb                         b    bb",
+            "bb                         b    bb",
+            "bb                         b    bb",
+            "bb                         b    bb",
+            "bb                         b    bb",
             "bb                              bb",
             "bb                              bb",
-            "bb                              bb",
-            "bb                              bb",
-            "bb                              bb",
-            "bb                              bb",
-            "bb                              bb",
-            "bb                              bb",
-            "bb                              bb",
-            "bb                              bb",
-            "bb                              bb",
-            "bb                              bb",
-            "bb                              bb",
-            "|                               bb",
-            "                                bb",
+            "|               _     _    _    bb",
+            "                bbb   bb   bbbbbbb",
             " _                              bb",
             "bbbbb     _                     bb",
             "bb        bbb                   bb",
@@ -113,57 +113,57 @@ let levels = {
         sceneChanges: [[1, 3, 1, 33, 25, "left"]],
         anchorWidths: [3, 3, 6, 4],
         map: [
-            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-            "bb                            bbbbbbb",
-            "bb                            bbbbbbb",
-            "bb                            bbbbbbb",
-            "bb                            bbbbbbb",
-            "bb         _       _          bbbbbbb",
-            "bb         bbb     bbb        bbbbbbb",
-            "bb        bb         bb       bbbbbbb",
-            "|        bbblllllllllbbb      bbbbbbb",
-            "        bbbblllllllllbbbb     bbbbbbb",
-            " _     bbbbblllllllllbbbbb_   bbbbbbb",
-            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "bb                             bbbbbbb",
+            "bb                             bbbbbbb",
+            "bb                             bbbbbbb",
+            "bb         _        _          bbbbbbb",
+            "bb         bbb      bbb        bbbbbbb",
+            "bb        bb          bb       bbbbbbb",
+            "|        bbbllllllllllbbb      bbbbbbb",
+            "        bbbbllllllllllbbbb     bbbbbbb",
+            " _     bbbbbllllllllllbbbbb_   bbbbbbb",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
         ]
     },
     5: {
         sceneChanges: [[6, 1, 1, 20, 32, "up", 19]],
-        anchorWidths: [],
+        anchorWidths: [5, 4, 4, 4, 3, 3, 4, 4, 4, 1],
         map: [
             "bbbbb|     bbbbbbbbbbbbbbbbbbbbb",
             "bbbbb      bbbbbbbbbbbbbbbbbbbbb",
             "bb                            bb",
             "bb                            bb",
-            "bb                            bb",
+            "bb   _                        bb",
             "bb   bbbbbb                   bb",
             "bb                            bb",
             "bb                            bb",
-            "bb                            bb",
+            "bb           _                bb",
             "bb           bbbb             bb",
             "bb                            bb",
-            "bb                            bb",
+            "bb                  _         bb",
             "bb                  bbbb      bb",
             "bb                            bb",
-            "bb                            bb",
+            "bb             _              bb",
             "bb             bbbb           bb",
             "bb                            bb",
             "bb                            bb",
             "bb                            bb",
             "bb         b                  bb",
             "bb        bbb                 bb",
-            "bb       bbbbb                bb",
+            "bb_   _  bbbbb_    _    _    _bb",
             "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
             "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
         ]
@@ -363,7 +363,7 @@ class Player {
         let anchorCollision = checkAnchorCollisions(this);
         if(anchorCollision !== null){
             this.anchor.x = anchors[anchorCollision].x + anchors[anchorCollision].width / 2 - (player.width / 2);
-            this.anchor.y = anchors[anchorCollision].y - blockSize;
+            this.anchor.y = anchors[anchorCollision].y + blockSize;
         }
         if(checkLavaCollisions(this)){
             this.lives--;
@@ -566,18 +566,19 @@ function drawHPReporter () {
 }
 
 function drawBlocks(){
+    //uncomment the following to test anchor positions
+    /* 
+    for(let i = 0; i < anchors.length; i++){
+        anchors[i].draw();
+    }
+    */
     for(let i = 0; i < blocks.length; i++){
         blocks[i].draw();
     }
     for(let i = 0; i < lava.length; i++){
         lava[i].draw();
     }
-    //uncomment the following to test anchor positions
-    /*
-    for(let i = 0; i < anchors.length; i++){
-        anchors[i].draw();
-    }
-    */
+    
     player.draw();
 }
 function updateBlocks(){
@@ -596,7 +597,7 @@ function createBlocks(){
                 lava.push(new Lava(j * blockSize, i * blockSize, blockSize, blockSize));
             }
             if(levels[currentLevel].map[i][j] === "_"){
-                anchors.push(new Anchor(j * blockSize, i * blockSize, blockSize * levels[currentLevel].anchorWidths[anchorIndex], blockSize, anchorIndex));
+                anchors.push(new Anchor(j * blockSize, i * blockSize - blockSize * 2, blockSize * levels[currentLevel].anchorWidths[anchorIndex], blockSize * 3, anchorIndex));
                 anchorIndex++;
             }
             if(levels[currentLevel].map[i][j] === "|"){

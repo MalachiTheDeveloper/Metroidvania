@@ -1,4 +1,3 @@
-
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 canvas.width = innerWidth;
@@ -201,6 +200,7 @@ class Player {
         this.immobilityFrames = 0;
         this.freezeFrames = 0;
         this.dir = "right";
+        this.touchingGround = false;
 
         this.canChangeScene = true;
 
@@ -212,10 +212,11 @@ class Player {
         this.sceneChangeDir = "left";
         this.activeExit = null;
 
-        this.abilities = ["dash"];
+        this.abilities = ["dash", "wall jump"];
         this.canUseDashKey = true;
         this.canDash = true;
         this.dashFrames = 0;
+        this.wallJumpActivated = false;
 
         this.anchor = {
             x: this.x,
@@ -272,6 +273,7 @@ class Player {
             if((controls.space && this.inAir <= 5 && this.jumpBuffer > 0 && this.immobilityFrames <= 0) || (controls.space && this.jumping < this.maxJumpDuration && this.immobilityFrames <= 0)){
                 this.velocity.y = -blockSize / 5;
                 if(this.jumping > this.maxJumpDuration){
+                    this.jumpBuffer = 0;
                     this.jumping = 0;
                 }
             }
@@ -318,6 +320,9 @@ class Player {
             this.x += this.velocity.x;
             this.x = Math.round(this.x);
             if(checkBlockCollisions(this)){
+                if(!this.touchingGround){
+                    this.wallJumpActivated = true;
+                }
                 if(this.velocity.x > 0){
                     while(checkBlockCollisions(this)){
                         this.x--;
@@ -332,6 +337,7 @@ class Player {
                     this.dashFrames = 3;
                 }
             }
+            this.touchingGround = false;
             this.y += this.velocity.y;
             this.y = Math.round(this.y);
             if(checkBlockCollisions(this)){
@@ -342,6 +348,7 @@ class Player {
                     this.inAir = 0;
                     this.gravity = 90;
                     this.canDash = true;
+                    this.touchingGround = true;
                 } else {
                     while(checkBlockCollisions(this)){
                         this.y++;
@@ -356,8 +363,36 @@ class Player {
             this.inAir = Infinity;
             this.jumping = Infinity;
         }
+        this.handleWallJump();
         this.handleHazardCollisions();
         this.handleSceneChanges();
+    }
+    handleWallJump(){
+        if(this.abilities.includes("wall jump") && !this.touchingGround){
+            this.x++;
+            if(checkBlockCollisions(this) && this.wallJumpActivated){
+                    if(this.velocity.y > blockSize / 10){
+                        this.velocity.y = blockSize / 10;
+                    }
+                    this.canDash = true;
+                    if(controls.space && this.jumpBuffer > 0){
+                        this.jumping = 0;
+                        this.velocity.x = -this.maxSpeed * 1.2;
+                    }
+            }
+            this.x-=2;
+            if(checkBlockCollisions(this) && this.wallJumpActivated){
+                if(this.velocity.y > blockSize / 10){
+                    this.velocity.y = blockSize / 10;
+                }
+                this.canDash = true;
+                if(controls.space && this.jumpBuffer > 0){
+                    this.jumping = 0;
+                    this.velocity.x = this.maxSpeed * 1.2;
+                }
+            }
+            this.x++;
+        }    
     }
     handleHazardCollisions(){
         let anchorCollision = checkAnchorCollisions(this);

@@ -34,7 +34,7 @@ let levelHeight = 0;
 let levels = {
     0: {
         anchorWidths: [4,4,2,3,3],
-        sceneChanges: [[1, 3, 1, 0, 16, "right"]],
+        sceneChanges: [{width: 1, height: 3, level: 1, x: 0, y: 16, dir: "right", altX: "none"}],
         map: [
             "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
             "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
@@ -72,7 +72,7 @@ let levels = {
     },
     1: {
         anchorWidths: [3, 2, 5, 4, 3, 3, 1, 3, 2, 2, 4, 2, 3, 3, 3, 3, 4],
-        sceneChanges: [[1, 3, 0, 32, 16, "left"], [1, 4, 2, 0, 15, "right"],[6, 1, 5, 7.5, -1, "down"]],
+        sceneChanges: [{width: 1, height: 3, level: 0, x: 32, y: 16, dir: "left", altX: "none"}, {width: 1, height: 4, level: 2, x: 0, y: 15, dir: "right", altX: "none"},{width: 6, height: 1, level: 5, x: 7.5, y: -1, dir: "down", altX: "none"}],
         map: [
             "bbbbbbbbbbbbbbbbbbbbbbbbbbbb    bb",
             "bbbbbbbbbbbbbbbbbbbbbbbbbbbb    bb",
@@ -109,7 +109,7 @@ let levels = {
         ]
     },
     2: {
-        sceneChanges: [[1, 3, 1, 33, 25, "left"]],
+        sceneChanges: [{width: 1, height: 3, level: 1, x: 33, y: 25, dir: "left", altX: "none"}],
         anchorWidths: [3, 3, 6, 4],
         map: [
             "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
@@ -138,7 +138,7 @@ let levels = {
         ]
     },
     5: {
-        sceneChanges: [[6, 1, 1, 20, 32, "up", 19]],
+        sceneChanges: [{width: 6, height: 1, level: 1, x: 20, y: 32, dir: "up", altX: 19}],
         anchorWidths: [5, 4, 4, 4, 3, 3, 4, 4, 4, 1],
         map: [
             "bbbbb|     bbbbbbbbbbbbbbbbbbbbb",
@@ -432,7 +432,7 @@ class Player {
             this.activeExit = exitID;
             this.immobilityFrames = Infinity;
             this.sceneChangeAnimationFrame = 0;
-            if(levels[currentLevel].sceneChanges[this.activeExit][5] === "left" || levels[currentLevel].sceneChanges[this.activeExit][5] === "right"){
+            if(levels[currentLevel].sceneChanges[this.activeExit].dir === "left" || levels[currentLevel].sceneChanges[this.activeExit].dir === "right"){
                 this.velocity.x = 0;
             }
             this.canChangeScene = false;
@@ -441,34 +441,34 @@ class Player {
             this.canChangeScene = true;
         }
         if(this.sceneChangeAnimationFrame > 0 && this.sceneChangeAnimationFrame < 15){
-            if(levels[currentLevel].sceneChanges[this.activeExit][5] === "left"){
+            if(levels[currentLevel].sceneChanges[this.activeExit].dir === "left"){
                 this.x -= this.maxSpeed;
                 this.sceneChangeDir = "left";
             }
-            if(levels[currentLevel].sceneChanges[this.activeExit][5] === "right"){
+            if(levels[currentLevel].sceneChanges[this.activeExit].dir === "right"){
                 this.x += this.maxSpeed;
                 this.sceneChangeDir = "right";
             }
-            if(levels[currentLevel].sceneChanges[this.activeExit][5] === "up"){
+            if(levels[currentLevel].sceneChanges[this.activeExit].dir === "up"){
                 this.velocity.y = 0;
                 this.y -= blockSize / 4;
                 this.sceneChangeDir = "up";
             }
-            if(levels[currentLevel].sceneChanges[this.activeExit][5] === "down"){
+            if(levels[currentLevel].sceneChanges[this.activeExit].dir === "down"){
                 this.sceneChangeDir = "down";
             }
         }
         if(this.sceneChangeAnimationFrame === 20){
-            this.sceneReenter.x = blockSize * levels[currentLevel].sceneChanges[this.activeExit][3];
-            this.sceneReenter.y = blockSize * levels[currentLevel].sceneChanges[this.activeExit][4];
+            this.sceneReenter.x = blockSize * levels[currentLevel].sceneChanges[this.activeExit].x;
+            this.sceneReenter.y = blockSize * levels[currentLevel].sceneChanges[this.activeExit].y;
             if(this.sceneChangeDir === "up" && player.dir === "left"){
-                this.sceneReenter.x = blockSize * levels[currentLevel].sceneChanges[this.activeExit][6];
+                this.sceneReenter.x = blockSize * levels[currentLevel].sceneChanges[this.activeExit].altX;
             }
             this.x = this.sceneReenter.x;
             this.y = this.sceneReenter.y;
             this.velocity.x = 0; 
             this.velocity.y = 0;
-            currentLevel = levels[currentLevel].sceneChanges[this.activeExit][2];
+            currentLevel = levels[currentLevel].sceneChanges[this.activeExit].level;
             camera.x += player.x - (canvas.width / 2) + (player.width / 2) - camera.x;
             camera.y += player.y - (canvas.height / 2) + (player.height / 2) - camera.y;
             moveCamera();
@@ -645,7 +645,7 @@ function createBlocks(){
                 anchorIndex++;
             }
             if(levels[currentLevel].map[i][j] === "|"){
-                exits.push(new Exit(j * blockSize, i * blockSize, blockSize * levels[currentLevel].sceneChanges[exitIndex][0], blockSize * levels[currentLevel].sceneChanges[exitIndex][1]));
+                exits.push(new Exit(j * blockSize, i * blockSize, blockSize * levels[currentLevel].sceneChanges[exitIndex].width, blockSize * levels[currentLevel].sceneChanges[exitIndex].height));
                 exitIndex++;
             }
         }

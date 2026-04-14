@@ -74,8 +74,8 @@ let levels = {
         anchorWidths: [3, 2, 5, 4, 3, 3, 1, 3, 2, 2, 4, 2, 3, 3, 3, 3, 4],
         sceneChanges: [[1, 3, 0, 32, 16, "left"], [1, 4, 2, 0, 15, "right"],[6, 1, 5, 7.5, -1, "down"]],
         map: [
-            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbb    bb",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbb    bb",
             "bb                         b    bb",
             "bb                         b    bb",
             "bb                         b    bb",
@@ -212,11 +212,13 @@ class Player {
         this.sceneChangeDir = "left";
         this.activeExit = null;
 
-        this.abilities = ["dash", "wall jump"];
+        this.abilities = ["dash", "wall jump", "double jump"];
         this.canUseDashKey = true;
         this.canDash = true;
         this.dashFrames = 0;
         this.wallJumpActivated = false;
+        this.canDoubleJump = true;
+
 
         this.anchor = {
             x: this.x,
@@ -276,6 +278,10 @@ class Player {
                     this.jumpBuffer = 0;
                     this.jumping = 0;
                 }
+            } else if(this.canDoubleJump && this.abilities.includes('double jump') && controls.space && this.jumpBuffer > 0 && this.immobilityFrames <= 0){
+                this.velocity.y = -blockSize / 5;
+                this.jumping = this.maxJumpDuration / 3;
+                this.canDoubleJump = false;
             }
 
             if(controls.space){
@@ -347,6 +353,7 @@ class Player {
                     }
                     this.inAir = 0;
                     this.gravity = 90;
+                    this.canDoubleJump = true;
                     this.canDash = true;
                     this.touchingGround = true;
                 } else {
@@ -375,6 +382,7 @@ class Player {
                         this.velocity.y = blockSize / 10;
                     }
                     this.canDash = true;
+                    this.canDoubleJump = true;
                     if(controls.space && this.jumpBuffer > 0){
                         this.jumping = 0;
                         this.velocity.x = -this.maxSpeed * 1.2;
@@ -385,6 +393,7 @@ class Player {
                 if(this.velocity.y > blockSize / 10){
                     this.velocity.y = blockSize / 10;
                 }
+                this.canDoubleJump = true;
                 this.canDash = true;
                 if(controls.space && this.jumpBuffer > 0){
                     this.jumping = 0;

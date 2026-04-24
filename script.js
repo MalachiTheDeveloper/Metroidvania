@@ -72,9 +72,9 @@ let levels = {
     },
     1: {
         anchorWidths: [3, 2, 5, 4, 3, 3, 1, 3, 2, 2, 4, 2, 3, 3, 3, 3, 4],
-        sceneChanges: [{width: 1, height: 3, level: 0, x: 32, y: 16, dir: "left", altX: "none"}, {width: 1, height: 4, level: 2, x: 0, y: 15, dir: "right", altX: "none"},{width: 6, height: 1, level: 5, x: 7.5, y: -1, dir: "down", altX: "none"}],
+        sceneChanges: [{width: 4, height: 1, level: 6, x: "none", y: 37, dir: "up", altX: 30}, {width: 1, height: 3, level: 0, x: 32, y: 16, dir: "left", altX: "none"}, {width: 1, height: 4, level: 2, x: 0, y: 15, dir: "right", altX: "none"},{width: 6, height: 1, level: 5, x: 7.5, y: -1, dir: "down", altX: "none"}],
         map: [
-            "bbbbbbbbbbbbbbbbbbbbbbbbbbbb    bb",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbb|   bb",
             "bbbbbbbbbbbbbbbbbbbbbbbbbbbb    bb",
             "bb                         b    bb",
             "bb                         b    bb",
@@ -106,6 +106,49 @@ let levels = {
             "bb_   _   _   _        _   bbbbbbb",
             "bbbbbbbbbbbbbbbbb      bbbbbbbbbbb",
             "bbbbbbbbbbbbbbbbb|     bbbbbbbbbbb",
+        ]
+    },
+    6: {
+        anchorWidths: [5, 3],
+        sceneChanges: [{width: 4, height: 1, level: 1, x: 29.5, y: -1, dir: "down", altX: "none"}],
+        map: [
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "bbl         bbll                bb",
+            "bbl         bbll                bb",
+            "bbl         bbll                bb",
+            "bbl         bbll                bb",
+            "bbl   l     bbll        l       bb",
+            "bbb   l     bbll        b      lbb",
+            "bbb   l                 b      lbb",
+            "bbb   l                 b      lbb",
+            "bbb   l                 b       bb",
+            "bbb   l                 b       bb",
+            "bbb   llllllllllllllllllb       bb",
+            "bbb         bb          bl      bb",
+            "bbl         bb          bl      bb",
+            "bbl         bb          bl      bb",
+            "bbl                     bl      bb",
+            "bbl                     bl      bb",
+            "bbl                     bl      bb",
+            "bbl                     b       bb",
+            "bblllllllllllllllllll   b      lbb",
+            "bbl          bb         b      lbb",
+            "bbl          bb         b      lbb",
+            "bbl          bb         b       bb",
+            "bbl          bb     llllb       bb",
+            "bbl          bb         bl      bb",
+            "bbl          bb         bl      bb",
+            "bbl          bb         bl      bb",
+            "bbl         llll        bl      bb",
+            "bbl                     b       bb",
+            "bbl                     b      lbb",
+            "bbl _                   b      lbb",
+            "bbl bbbbb   llll        b      lbb",
+            "bbl  bbb     bb         b       bb",
+            "bblllbbblllllbblllllllllb_      bb",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbb    bb",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbb|   bb",
         ]
     },
     2: {
@@ -240,14 +283,14 @@ class Player {
         this.dashFrames--;
         this.sceneChangeAnimationFrame++;
         if(this.dashFrames <= 0){
-            if(controls.a && this.immobilityFrames < 1){
+            if(controls.a && this.immobilityFrames <= 0){
                 this.velocity.x -= this.acceleration;
                 if(this.velocity.x < -this.maxSpeed){
                     this.velocity.x = -this.maxSpeed;
                 }
                 this.dir = "left";
             }
-            if(controls.d && this.immobilityFrames < 1){
+            if(controls.d && this.immobilityFrames <= 0){
                 this.velocity.x += this.acceleration;
                 if(this.velocity.x > this.maxSpeed){
                     this.velocity.x = this.maxSpeed;
@@ -265,6 +308,7 @@ class Player {
 
             this.inAir++;
             this.jumping++;
+            this.handleWallJump();
             if(this.freezeFrames <= 0 && !((this.sceneChangeAnimationFrame < 70) && (this.sceneChangeDir === "left" || this.sceneChangeDir === "right"))){
                 this.velocity.y += blockSize / this.gravity;
                 if(this.velocity.y > this.maxGravity){
@@ -304,7 +348,7 @@ class Player {
                 this.velocity.x = blockSize / 3;
             }
         }
-        if(this.abilities.includes('dash') && controls.rightClick && this.canDash && this.canUseDashKey && this.immobilityFrames < 0){
+        if(this.abilities.includes('dash') && controls.rightClick && this.canDash && this.canUseDashKey && this.immobilityFrames <= 0){
             this.dashFrames = 17;
             this.velocity.y = 0;
             this.canDash = false;
@@ -370,29 +414,51 @@ class Player {
             this.inAir = Infinity;
             this.jumping = Infinity;
         }
-        this.handleWallJump();
         this.handleHazardCollisions();
         this.handleSceneChanges();
     }
+    handleWallJumpActivatedVariable(){
+        if(this.wallJumpActivated){
+            if(this.touchingGround){
+                this.wallJumpActivated = false;
+            } else{
+                this.x++;
+                if(checkBlockCollisions(this)){
+                    this.x--;
+                    return;
+                }
+                this.x-=2;
+                if(checkBlockCollisions(this)){
+                    this.x++;
+                    return;
+                }
+                this.x++;
+                this.wallJumpActivated = false;
+            }
+        }
+    }
     handleWallJump(){
+        this.handleWallJumpActivatedVariable();
         if(this.abilities.includes("wall jump") && !this.touchingGround){
             this.x++;
             if(checkBlockCollisions(this) && this.wallJumpActivated){
                     if(this.velocity.y > blockSize / 10){
                         this.velocity.y = blockSize / 10;
                     }
+                    this.gravity = 90;
                     this.canDash = true;
                     this.canDoubleJump = true;
-                    if(controls.space && this.jumpBuffer > 0){
+                    if(controls.space && this.jumpBuffer > 0 && this.immobilityFrames <= 0){
                         this.jumping = 0;
                         this.velocity.x = -this.maxSpeed * 1.2;
                     }
             }
             this.x-=2;
-            if(checkBlockCollisions(this) && this.wallJumpActivated){
+            if(checkBlockCollisions(this) && this.wallJumpActivated && this.immobilityFrames <= 0){
                 if(this.velocity.y > blockSize / 10){
                     this.velocity.y = blockSize / 10;
                 }
+                this.gravity = 90;
                 this.canDoubleJump = true;
                 this.canDash = true;
                 if(controls.space && this.jumpBuffer > 0){
@@ -411,6 +477,7 @@ class Player {
         }
         if(checkLavaCollisions(this)){
             this.lives--;
+            this.dashFrames = -1;
             this.x = this.anchor.x;
             this.y = this.anchor.y;
             this.immobilityFrames = 30;
@@ -459,11 +526,13 @@ class Player {
             }
         }
         if(this.sceneChangeAnimationFrame === 20){
-            this.sceneReenter.x = blockSize * levels[currentLevel].sceneChanges[this.activeExit].x;
+            this.sceneReenter.x = levels[currentLevel].sceneChanges[this.activeExit].x;
             this.sceneReenter.y = blockSize * levels[currentLevel].sceneChanges[this.activeExit].y;
-            if(this.sceneChangeDir === "up" && player.dir === "left"){
-                this.sceneReenter.x = blockSize * levels[currentLevel].sceneChanges[this.activeExit].altX;
+            if(this.sceneChangeDir === "up" && levels[currentLevel].sceneChanges[this.activeExit].altX !== "none" && (player.dir === "left" || this.sceneReenter.x === "none")){
+                this.sceneReenter.x = levels[currentLevel].sceneChanges[this.activeExit].altX;
+                this.dir = "left";
             }
+            this.sceneReenter.x *= blockSize;
             this.x = this.sceneReenter.x;
             this.y = this.sceneReenter.y;
             this.velocity.x = 0; 
@@ -489,14 +558,17 @@ class Player {
         }
         if(this.sceneChangeAnimationFrame === 50 && this.sceneChangeDir === "down"){
             this.velocity.y = 0;
+            this.immobilityFrames = 23;
         }
         if(this.sceneChangeAnimationFrame === 50 && this.sceneChangeDir === "up"){
+            this.gravity = 75;
             this.x = this.sceneReenter.x;
             this.y = this.sceneReenter.y;
             this.velocity.y = -blockSize / 2.85;
             this.immobilityFrames = 60;
-            this.inAir = 100;
+            this.inAir = Infinity;
             this.jumping = Infinity;
+            this.canDoubleJump = false;
         }
         if(this.sceneChangeAnimationFrame >= 50 && this.sceneChangeAnimationFrame <= 68 && this.sceneChangeDir === "up"){
             if(player.dir === "right"){
@@ -505,7 +577,7 @@ class Player {
                 this.velocity.x = -blockSize / 9;
             }
         }
-        if(this.sceneChangeAnimationFrame === 70 && this.sceneChangeDir !== "up"){
+        if(this.sceneChangeAnimationFrame === 70 && this.sceneChangeDir !== "up" && this.sceneChangeDir !== "down"){
             this.immobilityFrames = 0;
         }
     }

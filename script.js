@@ -259,6 +259,7 @@ class Player {
         this.canUseDashKey = true;
         this.canDash = true;
         this.dashFrames = 0;
+        this.dashCooldown = 0;
         this.wallJumpActivated = false;
         this.canDoubleJump = true;
 
@@ -281,7 +282,27 @@ class Player {
         this.immobilityFrames--;
         this.freezeFrames--;
         this.dashFrames--;
+        this.dashCooldown--;
         this.sceneChangeAnimationFrame++;
+        if(this.abilities.includes('dash') && this.dashCooldown < 0 && controls.rightClick && this.canDash && this.canUseDashKey && this.immobilityFrames <= 0){
+            this.dashFrames = 17;
+            this.dashCooldown = 30;
+            this.velocity.y = 0;
+            this.canDash = false;
+        }
+        if(controls.rightClick){
+            this.canUseDashKey = false;
+        } else{
+            this.canUseDashKey = true;
+        }
+        if(this.dashFrames === 0){
+            if(this.velocity.x !== 0){
+                this.velocity.x = this.velocity.x / Math.abs(this.velocity.x) * this.maxSpeed;
+            }
+            this.inAir = Infinity;
+            this.jumping = Infinity;
+            this.velocity.y = 0;
+        }
         if(this.dashFrames <= 0){
             if(controls.a && this.immobilityFrames <= 0){
                 this.velocity.x -= this.acceleration;
@@ -348,24 +369,7 @@ class Player {
                 this.velocity.x = blockSize / 3;
             }
         }
-        if(this.abilities.includes('dash') && controls.rightClick && this.canDash && this.canUseDashKey && this.immobilityFrames <= 0){
-            this.dashFrames = 17;
-            this.velocity.y = 0;
-            this.canDash = false;
-        }
-        if(controls.rightClick){
-            this.canUseDashKey = false;
-        } else{
-            this.canUseDashKey = true;
-        }
-        if(this.dashFrames === 0){
-            if(this.velocity.x !== 0){
-                this.velocity.x = this.velocity.x / Math.abs(this.velocity.x) * this.maxSpeed;
-            }
-            this.inAir = Infinity;
-            this.jumping = Infinity;
-            this.velocity.y = 0;
-        }
+        
         if(this.freezeFrames < 0){
             this.x += this.velocity.x;
             this.x = Math.round(this.x);
@@ -434,17 +438,23 @@ class Player {
                 }
                 this.x++;
                 this.wallJumpActivated = false;
+                /*if(this.dir === "right"){
+                    this.dir = "left"
+                } else{
+                    this.dir = "right";
+                }*/
             }
         }
     }
     handleWallJump(){
         this.handleWallJumpActivatedVariable();
-        if(this.abilities.includes("wall jump") && !this.touchingGround){
+        if(this.abilities.includes("wall jump") && !this.touchingGround && this.velocity.y > 0){
             this.x++;
             if(checkBlockCollisions(this) && this.wallJumpActivated){
                     if(this.velocity.y > blockSize / 10){
                         this.velocity.y = blockSize / 10;
                     }
+                    this.dir = "left";
                     this.gravity = 90;
                     this.canDash = true;
                     this.canDoubleJump = true;
@@ -458,6 +468,7 @@ class Player {
                 if(this.velocity.y > blockSize / 10){
                     this.velocity.y = blockSize / 10;
                 }
+                this.dir = "right"
                 this.gravity = 90;
                 this.canDoubleJump = true;
                 this.canDash = true;
@@ -486,6 +497,7 @@ class Player {
         }
         if(this.lives <= 0){
             this.immobilityFrames = 80;
+            this.dir = "right";
             this.x = this.spawnPoint.x;
             this.y = this.spawnPoint.y;
             currentLevel = this.spawnPoint.level;

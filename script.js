@@ -277,6 +277,16 @@ class Player {
     draw(){
         ctx.fillStyle = "red";
         ctx.fillRect(this.x - camera.x, this.y - camera.y, this.width, this.height);
+        ctx.fillStyle = "rgb(255,255,255)";
+        if(this.dir === "left"){
+            ctx.fillRect(this.x - camera.x + this.width / 10, this.y - camera.y + this.height / 6, this.width / 3, this.width / 3);
+            ctx.fillStyle = "black";
+            ctx.fillRect(this.x - camera.x + this.width / 10 + this.width / 60, this.y - camera.y + this.height / 6 + this.width / 60, this.width / 5, this.width / 5);
+        } else{
+            ctx.fillRect(this.x - camera.x + this.width / 10*6, this.y - camera.y + this.height / 6, this.width / 3, this.width / 3);
+            ctx.fillStyle = "black";
+            ctx.fillRect(this.x - camera.x + this.width / 10*6 + (this.width / 3 - this.width / 5 - this.width / 60), this.y - camera.y + this.height / 6 + this.width / 60, this.width / 5, this.width / 5);
+        }
     }
     update(){
         this.immobilityFrames--;
@@ -286,7 +296,7 @@ class Player {
         this.sceneChangeAnimationFrame++;
         if(this.abilities.includes('dash') && this.dashCooldown < 0 && controls.rightClick && this.canDash && this.canUseDashKey && this.immobilityFrames <= 0){
             this.dashFrames = 17;
-            this.dashCooldown = 30;
+            this.dashCooldown = 25;
             this.velocity.y = 0;
             this.canDash = false;
         }
@@ -438,11 +448,6 @@ class Player {
                 }
                 this.x++;
                 this.wallJumpActivated = false;
-                /*if(this.dir === "right"){
-                    this.dir = "left"
-                } else{
-                    this.dir = "right";
-                }*/
             }
         }
     }
@@ -454,7 +459,6 @@ class Player {
                     if(this.velocity.y > blockSize / 10){
                         this.velocity.y = blockSize / 10;
                     }
-                    this.dir = "left";
                     this.gravity = 90;
                     this.canDash = true;
                     this.canDoubleJump = true;
@@ -462,13 +466,13 @@ class Player {
                         this.jumping = 0;
                         this.velocity.x = -this.maxSpeed * 1.2;
                     }
+                    this.dir = "left";
             }
             this.x-=2;
             if(checkBlockCollisions(this) && this.wallJumpActivated && this.immobilityFrames <= 0){
                 if(this.velocity.y > blockSize / 10){
                     this.velocity.y = blockSize / 10;
                 }
-                this.dir = "right"
                 this.gravity = 90;
                 this.canDoubleJump = true;
                 this.canDash = true;
@@ -476,6 +480,7 @@ class Player {
                     this.jumping = 0;
                     this.velocity.x = this.maxSpeed * 1.2;
                 }
+                this.dir = "right";
             }
             this.x++;
         }    
@@ -613,7 +618,7 @@ class Block {
         this.height = height; 
     } 
     draw(){
-        ctx.fillStyle = "black";
+        ctx.fillStyle = "rgb(0,0,0)";
         ctx.fillRect(this.x - camera.x, this.y - camera.y, this.width, this.height);
     }
 }
@@ -626,7 +631,7 @@ class Lava {
         this.height = height; 
     } 
     draw(){
-        ctx.fillStyle = "rgb(255, 0, 0)";
+        ctx.fillStyle = "rgb(255, 68, 0)";
         ctx.fillRect(this.x - camera.x, this.y - camera.y, this.width, this.height);
     }
 }

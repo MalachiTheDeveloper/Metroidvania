@@ -243,6 +243,7 @@ class Player {
         this.immobilityFrames = 0;
         this.freezeFrames = 0;
         this.dir = "right";
+        this.dashDir = this.dir;
         this.touchingGround = false;
 
         this.canChangeScene = true;
@@ -295,6 +296,7 @@ class Player {
         this.dashCooldown--;
         this.sceneChangeAnimationFrame++;
         if(this.abilities.includes('dash') && this.dashCooldown < 0 && controls.rightClick && this.canDash && this.canUseDashKey && this.immobilityFrames <= 0){
+            this.dir = this.dashDir;
             this.dashFrames = 17;
             this.dashCooldown = 25;
             this.velocity.y = 0;
@@ -372,10 +374,10 @@ class Player {
                 this.jumpBuffer = 4;
             }
         } else{
-            if(this.dir === "left"){
+            if(this.dashDir === "left"){
                 this.velocity.x = -blockSize / 3;
             }
-            if(this.dir === "right"){
+            if(this.dashDir === "right"){
                 this.velocity.x = blockSize / 3;
             }
         }
@@ -397,8 +399,8 @@ class Player {
                     }
                 }
                 this.velocity.x = 0;
-                if(this.dashFrames > 3){
-                    this.dashFrames = 3;
+                if(this.dashFrames > 5){
+                    this.dashFrames = 5;
                 }
             }
             this.touchingGround = false;
@@ -432,24 +434,33 @@ class Player {
         this.handleSceneChanges();
     }
     handleWallJumpActivatedVariable(){
-        if(this.wallJumpActivated){
             if(this.touchingGround){
                 this.wallJumpActivated = false;
             } else{
                 this.x++;
                 if(checkBlockCollisions(this)){
                     this.x--;
+                    if(this.velocity.y > 0){
+                        this.dir = "left";
+                    } else {
+                        this.dashDir = "left";
+                    }
                     return;
                 }
                 this.x-=2;
                 if(checkBlockCollisions(this)){
                     this.x++;
+                    if(this.velocity.y > 0){
+                        this.dir = "right";
+                    } else {
+                        this.dashDir = "right";
+                    }
                     return;
                 }
+                this.dashDir = this.dir;
                 this.x++;
                 this.wallJumpActivated = false;
             }
-        }
     }
     handleWallJump(){
         this.handleWallJumpActivatedVariable();

@@ -27,6 +27,7 @@ let blocks = [];
 let exits = [];
 let lava = [];
 let anchors = [];
+let particles = [];
 
 let currentLevel = 0;
 let levelWidth = 0;
@@ -442,9 +443,8 @@ class Player {
                     this.x--;
                     if(this.velocity.y > 0){
                         this.dir = "left";
-                    } else {
-                        this.dashDir = "left";
-                    }
+                    } 
+                    this.dashDir = "left";
                     return;
                 }
                 this.x-=2;
@@ -452,9 +452,8 @@ class Player {
                     this.x++;
                     if(this.velocity.y > 0){
                         this.dir = "right";
-                    } else {
-                        this.dashDir = "right";
-                    }
+                    } 
+                    this.dashDir = "right";
                     return;
                 }
                 this.dashDir = this.dir;
@@ -669,6 +668,113 @@ class Exit {
         this.height = height; 
     } 
 }
+
+class Particle {
+    constructor(x, y, radius, color, opacity, name, xVelocity, yVelocity, xFriction, yFriction, life, gravity, bounciness, collisions, dilation, opacityChange){
+        this.x = x;
+        this.y = y;
+        this.radius = radius;
+        this.hitbox = {
+            x: this.x - this.radius,
+            y: this.y - this.radius,
+            width: this.radius * 2,
+            height: this.radius * 2
+        }
+        this.color = color;
+        this.opacity = opacity;
+        this.name = name;
+        this.velocity = {
+            x: xVelocity,
+            y: yVelocity
+        };
+        this.friction = {
+            x: xFriction,
+            y: yFriction
+        }
+        this.life = life;
+        this.gravity = gravity;
+        this.bounciness = bounciness;
+        this.collisions = collisions;
+        this.dilation = dilation;
+        this.opacityChange = opacityChange;
+    }
+    draw(){
+        ctx.beginPath();
+        ctx.moveTo(this.x - camera.x, this.y - camera.y);
+        ctx.arc(this.x - camera.x, this.y - camera.y, this.radius, 0, Math.PI * 2)
+        ctx.fillStyle = this.color;
+        ctx.globalAlpha = this.opacity;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+    }
+    update(){
+        this.hitbox = {
+            x: this.x - this.radius,
+            y: this.y - this.radius,
+            width: this.radius * 2,
+            height: this.radius * 2
+        }
+        this.velocity.y += this.gravity;
+        if(this.velocity.y > player.maxGravity){
+            this.velocity.y = player.maxGravity;
+        }
+        this.opacity += this.opacityChange;
+        this.radius *= this.dilation;
+        this.x += this.velocity.x;
+        this.hitbox.x += this.velocity.x;
+        this.velocity.x *= this.friction.x;
+        if(checkBlockCollisions(this.hitbox) && this.collisions > 0){
+            if(this.velocity.x > 0){
+                while (checkBlockCollisions(this.hitbox)){
+                    this.x--;
+                    this.hitbox.x--;
+                }
+            } else{
+                while (checkBlockCollisions(this.hitbox)){
+                    this.x++;
+                    this.hitbox.x++;
+                }
+            }
+            if(this.collisions === 1){
+                this.velocity.x = 0;
+            } else if(this.collisions === 2){
+                this.velocity.x = -this.velocity.x;
+            }
+        }
+        this.y += this.velocity.y;
+        this.y = Math.round(this.y);
+        this.hitbox.y += this.velocity.y;
+        this.hitbox.y = Math.round(this.hitbox.y);
+        this.velocity.y *= this.friction.y;
+        if(checkBlockCollisions(this.hitbox) && this.collisions > 0){
+            if(this.velocity.y > 0){
+                while (checkBlockCollisions(this.hitbox)){
+                    this.y--;
+                    this.hitbox.y--;
+                }
+            } else{
+                while (checkBlockCollisions(this.hitbox)){
+                    this.y++;
+                    this.hitbox.y++;
+                }
+            }
+            if(this.collisions === 1){
+                this.velocity.y = 0;
+            } else if(this.collisions === 2){
+                this.velocity.y = -this.velocity.y * this.bounciness;
+            }
+        }
+        if (Math.abs(this.velocity.x) < 0.1) {
+            this.velocity.x = 0;
+        }
+
+        if (Math.abs(this.velocity.y) < 0.1) {
+            this.velocity.y = 0;
+        }
+    }
+}
+
+
 let curtainAlpha = 0;
 function handleCurtains(){
     let curtain = false;
@@ -722,11 +828,22 @@ function drawBlocks(){
     for(let i = 0; i < lava.length; i++){
         lava[i].draw();
     }
+    for(let i = 0; i < particles.length; i++){
+        particles[i].draw();
+    }
     
     player.draw();
 }
 function updateBlocks(){
     player.update();
+    for(let i = particles.length - 1; i >= 0; i--){
+        particles[i].life--;
+        if(particles[i].life < 0 || particles[i].opacity <= 0 || particles[i].radius <= 0){
+            particles.splice(i, 1);
+            break;
+        }
+        particles[i].update();
+    }
 }
 
 function createBlocks(){
@@ -757,6 +874,7 @@ function clearBlocks(){
     blocks = [];
     lava = [];
     anchors = [];
+    particles = [];
 }
 
 function moveCamera(){

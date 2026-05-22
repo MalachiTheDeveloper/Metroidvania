@@ -1069,7 +1069,7 @@ document.addEventListener('mousedown', (e) => {
         controls.rightClick = true;
     }
 })
-document.addEventListener('mouseup', (e) => {
+document.addEventListener('mouseup', (e) => { 
     if(e.button === 0){
         controls.click = false;
     } else if(e.button === 2){

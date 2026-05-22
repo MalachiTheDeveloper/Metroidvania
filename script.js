@@ -4,6 +4,8 @@ canvas.width = innerWidth;
 canvas.height = innerHeight;
 let blockSize = Math.round(((innerWidth + innerHeight) / 2) / 20);
 
+let debugText = "";
+
 let controls = {
     click: false,
     rightClick: false,
@@ -323,6 +325,7 @@ class Player {
                     this.velocity.x = -this.maxSpeed;
                 }
                 this.dir = "left";
+                this.dashDir = "left";
             }
             if(controls.d && this.immobilityFrames <= 0){
                 this.velocity.x += this.acceleration;
@@ -330,6 +333,7 @@ class Player {
                     this.velocity.x = this.maxSpeed;
                 }
                 this.dir = "right";
+                this.dashDir = "right";
             }
             
             if(this.immobilityFrames > 1 || ((!(controls.a || controls.d)) || (controls.a && controls.d))){
@@ -382,6 +386,12 @@ class Player {
                 this.velocity.x = blockSize / 3;
             }
         }
+        this.touchingGround = false;
+        this.y++;
+        if(checkBlockCollisions(this)){
+            this.touchingGround = true;
+        }
+        this.y--;
         
         if(this.freezeFrames < 0){
             this.x += this.velocity.x;
@@ -404,7 +414,6 @@ class Player {
                     this.dashFrames = 5;
                 }
             }
-            this.touchingGround = false;
             this.y += this.velocity.y;
             this.y = Math.round(this.y);
             if(checkBlockCollisions(this)){
@@ -416,7 +425,6 @@ class Player {
                     this.gravity = 90;
                     this.canDoubleJump = true;
                     this.canDash = true;
-                    this.touchingGround = true;
                 } else {
                     while(checkBlockCollisions(this)){
                         this.y++;
@@ -435,31 +443,31 @@ class Player {
         this.handleSceneChanges();
     }
     handleWallJumpActivatedVariable(){
-            if(this.touchingGround){
-                this.wallJumpActivated = false;
-            } else{
-                this.x++;
-                if(checkBlockCollisions(this)){
-                    this.x--;
-                    if(this.velocity.y > 0){
-                        this.dir = "left";
-                    } 
-                    this.dashDir = "left";
-                    return;
-                }
-                this.x-=2;
-                if(checkBlockCollisions(this)){
-                    this.x++;
-                    if(this.velocity.y > 0){
-                        this.dir = "right";
-                    } 
-                    this.dashDir = "right";
-                    return;
-                }
-                this.dashDir = this.dir;
-                this.x++;
-                this.wallJumpActivated = false;
-            }
+        if(this.touchingGround){
+            this.wallJumpActivated = false;
+            return;
+        } 
+        this.x++;
+        if(checkBlockCollisions(this)){
+            this.x--;
+            if(this.velocity.y > 0){
+                this.dir = "left";
+            } 
+            this.dashDir = "left";
+            return;
+        }
+        this.x-=2;
+        if(checkBlockCollisions(this)){
+            this.x++;
+            if(this.velocity.y > 0){
+                this.dir = "right";
+            } 
+            this.dashDir = "right";
+            return;
+        }
+        this.dashDir = this.dir;
+        this.x++;
+        this.wallJumpActivated = false;
     }
     handleWallJump(){
         this.handleWallJumpActivatedVariable();
@@ -477,6 +485,7 @@ class Player {
                         this.velocity.x = -this.maxSpeed * 1.2;
                     }
                     this.dir = "left";
+                    this.dashDir = "left"
             }
             this.x-=2;
             if(checkBlockCollisions(this) && this.wallJumpActivated && this.immobilityFrames <= 0){
@@ -491,6 +500,7 @@ class Player {
                     this.velocity.x = this.maxSpeed * 1.2;
                 }
                 this.dir = "right";
+                this.dashDir = "right";
             }
             this.x++;
         }    
@@ -513,6 +523,7 @@ class Player {
         if(this.lives <= 0){
             this.immobilityFrames = 80;
             this.dir = "right";
+            this.dashDir = "right"
             this.x = this.spawnPoint.x;
             this.y = this.spawnPoint.y;
             currentLevel = this.spawnPoint.level;
@@ -558,6 +569,7 @@ class Player {
             if(this.sceneChangeDir === "up" && levels[currentLevel].sceneChanges[this.activeExit].altX !== "none" && (player.dir === "left" || this.sceneReenter.x === "none")){
                 this.sceneReenter.x = levels[currentLevel].sceneChanges[this.activeExit].altX;
                 this.dir = "left";
+                this.dashDir = "left";
             }
             this.sceneReenter.x *= blockSize;
             this.x = this.sceneReenter.x;
@@ -813,6 +825,7 @@ function drawHPReporter () {
         ctx.fillStyle = "rgb(255, 0, 0)";
         ctx.fillRect(blockSize * 0.75 + i * blockSize, blockSize * 0.75, blockSize * 0.75, blockSize * 0.75)
     }
+    ctx.fillText(debugText, blockSize * 0.75, blockSize * 3);
 }
 
 function drawBlocks(){

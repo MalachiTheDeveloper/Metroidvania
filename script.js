@@ -264,7 +264,7 @@ class Player {
         this.canDash = true;
         this.dashFrames = 0;
         this.dashCooldown = 0;
-        this.wallJumpActivated = false;
+        this.wallSlideActivated = false;
         this.canDoubleJump = true;
 
 
@@ -398,7 +398,7 @@ class Player {
             this.x = Math.round(this.x);
             if(checkBlockCollisions(this)){
                 if(!this.touchingGround){
-                    this.wallJumpActivated = true;
+                    this.wallSlideActivated = true;
                 }
                 if(this.velocity.x > 0){
                     while(checkBlockCollisions(this)){
@@ -442,15 +442,15 @@ class Player {
         this.handleHazardCollisions();
         this.handleSceneChanges();
     }
-    handleWallJumpActivatedVariable(){
+    handleWallSlideActivatedVariable(){
         if(this.touchingGround){
-            this.wallJumpActivated = false;
+            this.wallSlideActivated = false;
             return;
         } 
         this.x++;
         if(checkBlockCollisions(this)){
             this.x--;
-            if(this.velocity.y > 0){
+            if(this.velocity.y > 0 && this.wallSlideActivated === true){
                 this.dir = "left";
             } 
             this.dashDir = "left";
@@ -459,7 +459,7 @@ class Player {
         this.x-=2;
         if(checkBlockCollisions(this)){
             this.x++;
-            if(this.velocity.y > 0){
+            if(this.velocity.y > 0 && this.wallSlideActivated === true){
                 this.dir = "right";
             } 
             this.dashDir = "right";
@@ -467,13 +467,13 @@ class Player {
         }
         this.dashDir = this.dir;
         this.x++;
-        this.wallJumpActivated = false;
+        this.wallSlideActivated = false;
     }
     handleWallJump(){
-        this.handleWallJumpActivatedVariable();
-        if(this.abilities.includes("wall jump") && !this.touchingGround && this.velocity.y > 0){
+        this.handleWallSlideActivatedVariable();
+        if(this.abilities.includes("wall jump") && !this.touchingGround && this.velocity.y >= 0){
             this.x++;
-            if(checkBlockCollisions(this) && this.wallJumpActivated){
+            if(checkBlockCollisions(this) && this.wallSlideActivated){
                     if(this.velocity.y > blockSize / 10){
                         this.velocity.y = blockSize / 10;
                     }
@@ -488,7 +488,7 @@ class Player {
                     this.dashDir = "left"
             }
             this.x-=2;
-            if(checkBlockCollisions(this) && this.wallJumpActivated && this.immobilityFrames <= 0){
+            if(checkBlockCollisions(this) && this.wallSlideActivated && this.immobilityFrames <= 0){
                 if(this.velocity.y > blockSize / 10){
                     this.velocity.y = blockSize / 10;
                 }
@@ -851,7 +851,7 @@ function updateBlocks(){
     player.update();
     for(let i = particles.length - 1; i >= 0; i--){
         particles[i].life--;
-        if(particles[i].life < 0 || particles[i].opacity <= 0 || particles[i].radius <= 0){
+        if(particles[i].life < 0 || particles[i].opacity <= 0 || particles[i].radius <= 0 || particles[i].x < -particles.radius || particles[i].y < -particles.radius || particles[i].x > levelWidth + particles[i].radius || particles[i].y > levelHeight + particles[i].radius){
             particles.splice(i, 1);
             break;
         }

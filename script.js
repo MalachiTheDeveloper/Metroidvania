@@ -303,7 +303,9 @@ class Player {
             this.dashFrames = 17;
             this.dashCooldown = 25;
             this.velocity.y = 0;
-            this.canDash = false;
+            if(!(this.touchingGround || this.wallSlideActivated)){
+                this.canDash = false;
+            }
         }
         if(controls.rightClick){
             this.canUseDashKey = false;

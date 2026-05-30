@@ -381,7 +381,7 @@ class Player {
         } else{
             if(this.dashDir === "left"){
                 for(let i = 0; i < 5; i++){
-                    particles.push(new Particle(player.x + player.width - blockSize / 3, player.y + (Math.random()) * player.height, blockSize / 6, "red", 1, "dash particle", blockSize / ((Math.random() * 5) + 10), blockSize * ((Math.random() * 0.1) - 0.05), 1, 1, Infinity, 0, 0, 0, 0.9, -0.05));
+                    particles.push(new Particle(player.x + player.width, player.y + (Math.random()) * player.height, blockSize / 6, "red", 1, "dash particle", blockSize / ((Math.random() * 5) + 10), blockSize * ((Math.random() * 0.1) - 0.05), 1, 1, Infinity, 0, 0, 0, 0.9, -0.05));
                 }
                 this.velocity.x = -blockSize / 3;
             }

@@ -1062,14 +1062,18 @@ window.addEventListener("keyup", (e) => {
     }
 });
 
-document.addEventListener('mousedown', (e) => {
+document.addEventListener('pointerdown', (e) => {
+    debugText = e.pointerType + ", " + e.button + ", " + e.buttons;
+    if(e.pointerType !== "mouse"){
+        return;
+    }
     if(e.button === 0){
         controls.click = true;
     } else if(e.button === 2){
         controls.rightClick = true;
     }
 })
-document.addEventListener('mouseup', (e) => {
+document.addEventListener('pointerup', (e) => {
     if(e.button === 0){
         controls.click = false;
     } else if(e.button === 2){

@@ -380,9 +380,15 @@ class Player {
             }
         } else{
             if(this.dashDir === "left"){
+                for(let i = 0; i < 5; i++){
+                    particles.push(new Particle(player.x + player.width - blockSize / 3, player.y + (Math.random()) * player.height, blockSize / 6, "red", 1, "dash particle", blockSize / ((Math.random() * 5) + 10), blockSize * ((Math.random() * 0.1) - 0.05), 1, 1, Infinity, 0, 0, 0, 0.9, -0.05));
+                }
                 this.velocity.x = -blockSize / 3;
             }
             if(this.dashDir === "right"){
+                for(let i = 0; i < 5; i++){
+                    particles.push(new Particle(player.x, player.y + (Math.random()) * player.height, blockSize / 6, "red", 1, "dash particle", -blockSize / ((Math.random() * 5) + 10), blockSize * ((Math.random() * 0.1) - 0.05), 1, 1, Infinity, 0, 0, 0, 0.9, -0.05));
+                }
                 this.velocity.x = blockSize / 3;
             }
         }
@@ -851,10 +857,11 @@ function updateBlocks(){
     player.update();
     for(let i = particles.length - 1; i >= 0; i--){
         particles[i].life--;
-        if(particles[i].life < 0 || particles[i].opacity <= 0 || particles[i].radius <= 0 || particles[i].x < -particles.radius || particles[i].y < -particles.radius || particles[i].x > levelWidth + particles[i].radius || particles[i].y > levelHeight + particles[i].radius){
+        if(particles[i].life < 0 || particles[i].radius <= 0 || particles[i].opacity <= 0 || particles[i].radius <= 0 || particles[i].x < -particles.radius || particles[i].y < -particles.radius || particles[i].x > levelWidth + particles[i].radius || particles[i].y > levelHeight + particles[i].radius){
             particles.splice(i, 1);
-            break;
         }
+    }
+    for(let i = 0; i < particles.length; i++){
         particles[i].update();
     }
 }

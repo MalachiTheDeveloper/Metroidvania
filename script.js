@@ -872,7 +872,7 @@ function updateBlocks(){
     player.update();
     for(let i = particles.length - 1; i >= 0; i--){
         particles[i].life--;
-        if(particles[i].life < 0 || particles[i].radius <= 0 || particles[i].opacity <= 0 || particles[i].radius <= 0 || particles[i].x < -particles.radius || particles[i].y < -particles.radius || particles[i].x > levelWidth + particles[i].radius || particles[i].y > levelHeight + particles[i].radius){
+        if(particles[i].life < 0 || particles[i].radius <= 0 || particles[i].opacity <= 0 || particles[i].radius <= 0 || particles[i].x < -particles[i].radius || particles[i].y < -particles[i].radius || particles[i].x > levelWidth + particles[i].radius || particles[i].y > levelHeight + particles[i].radius){
             particles.splice(i, 1);
         }
     }

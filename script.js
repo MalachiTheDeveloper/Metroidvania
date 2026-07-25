@@ -915,7 +915,6 @@ function clearBlocks(){
     blocks = [];
     lava = [];
     anchors = [];
-    particles = [];
 }
 
 function moveCamera(){
@@ -944,12 +943,34 @@ function resizeCanvas(){
     let anchorY = player.anchor.y / blockSize;
     let spawnX = player.spawnPoint.x / blockSize;
     let spawnY = player.spawnPoint.y / blockSize;
+    let particleX = [];
+    let particleY = [];
+    let particleRadius = [];
+    for(let i = 0; i < particles.length; i++){
+        particleX.push(particles[i].x / blockSize);
+        particleY.push(particles[i].y / blockSize);
+        particleRadius.push(particles[i].radius / blockSize);
+    }
     canvas.width = innerWidth;
     canvas.height = innerHeight;
     blockSize = Math.round(((innerWidth + innerHeight) / 2) / 20);
+    for(let i = 0; i < particles.length; i++){
+        particles[i].x = particleX[i] * blockSize;
+        debugText = particles[i].x
+        particles[i].y = particleY[i] * blockSize;
+        particles[i].radius = particleRadius[i] * blockSize;
+    }
+
     rebuildLevel();
     player.width = blockSize;
     player.height = blockSize * 2;
+    debugText = particles.length;
+    for(let i = 0; i < particles.length; i++){
+        particles[i].x = particleX[i] * blockSize;
+        debugText = particles[i].x
+        particles[i].y = particleY[i] * blockSize;
+        particles[i].radius = particleRadius[i] * blockSize;
+    }
     player.x = x * blockSize;
     player.y = y * blockSize;
     player.anchor.x = anchorX * blockSize;
@@ -963,11 +984,12 @@ function resizeCanvas(){
 function rebuildLevel(){
     clearBlocks();
     createBlocks();
-    levelWidth = levels[currentLevel].map[0].length * blockSize;
+    levelWidth = levels[currentLevel].maap[0].length * blockSize;
     levelHeight = levels[currentLevel].map.length * blockSize;
 }
 
 function resetLevel(){
+    particles = [];
     rebuildLevel();
     camera.x += player.x - (canvas.width / 2) + (player.width / 2) - camera.x;
     camera.y += player.y - (canvas.height / 2) + (player.height / 2) - camera.y;
@@ -1091,7 +1113,6 @@ window.addEventListener("keyup", (e) => {
 });
 
 document.addEventListener('pointerdown', (e) => {
-    debugText = e.pointerType + ", " + e.button + ", " + e.buttons;
     if(e.pointerType !== "mouse"){
         return;
     }

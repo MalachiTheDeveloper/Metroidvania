@@ -32,7 +32,7 @@ let lava = [];
 let anchors = [];
 let particles = [];
 
-let currentLevel = 0;
+let currentLevel = 2;
 let levelWidth = 0;
 let levelHeight = 0;
 let levels = {
@@ -156,32 +156,61 @@ let levels = {
         ]
     },
     2: {
-        sceneChanges: [{width: 1, height: 3, level: 1, x: 33, y: 25, dir: "left", altX: "none"}],
-        anchorWidths: [3, 3, 6, 4],
+        sceneChanges: [{width: 4, height: 6, level: 7, x: 7.5, y: 15, dir: "door", altX: "none"}, {width: 1, height: 3, level: 1, x: 33, y: 25, dir: "left", altX: "none"}],
+        anchorWidths: [3, 3, 6, 6],
         map: [
-            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-            "bb                             bbbbbbb",
-            "bb                             bbbbbbb",
-            "bb                             bbbbbbb",
-            "bb         _        _          bbbbbbb",
-            "bb         bbb      bbb        bbbbbbb",
-            "bb        bb          bb       bbbbbbb",
-            "|        bbbllllllllllbbb      bbbbbbb",
-            "        bbbbllllllllllbbbb     bbbbbbb",
-            " _     bbbbbllllllllllbbbbb_   bbbbbbb",
-            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "bb                               bbbbbbb",
+            "bb                               bbbbbbb",
+            "bb                               bbbbbbb",
+            "bb         _        _       |    bbbbbbb",
+            "bb         bbb      bbb          bbbbbbb",
+            "bb        bb          bb         bbbbbbb",
+            "|        bbbllllllllllbbb        bbbbbbb",
+            "        bbbbllllllllllbbbb       bbbbbbb",
+            " _     bbbbbllllllllllbbbbb_     bbbbbbb",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        ]
+    },
+    7: {
+        sceneChanges: [],
+        anchorWidths: [36],
+        map: [
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "bb                                    bb",
+            "bb                                    bb",
+            "bb                                    bb",
+            "bb                                    bb",
+            "bb                                    bb",
+            "bb                                    bb",
+            "bb                                    bb",
+            "bb                                    bb",
+            "bb_                                   bb",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
         ]
     },
     5: {
@@ -554,7 +583,7 @@ class Player {
     }
     handleSceneChanges(){
         let exitID = checkExitCollisions(this);
-        if(exitID !== null && this.canChangeScene){
+        if(exitID !== null && this.canChangeScene&& levels[currentLevel].sceneChanges[exitID].dir !== "door"){
             this.activeExit = exitID;
             this.immobilityFrames = Infinity;
             this.sceneChangeAnimationFrame = 0;
@@ -651,7 +680,8 @@ class Player {
         this.maxJumpDuration = 15;
     };
 }
-const player = new Player(blockSize * 5, blockSize * 28, blockSize, blockSize*2)
+//const player = new Player(blockSize * 5, blockSize * 28, blockSize, blockSize*2)
+const player = new Player(blockSize * 7, blockSize * 14, blockSize, blockSize*2)
 
 class Block {
     constructor(x, y, width, height){
@@ -700,6 +730,10 @@ class Exit {
         this.width = width;
         this.height = height; 
     } 
+    draw(){
+        ctx.fillStyle = "rgb(50, 50, 50)"
+        ctx.fillRect(this.x - camera.x, this.y - camera.y, this.width, this.height);
+    }
 }
 
 class Particle {
@@ -862,6 +896,11 @@ function drawBlocks(){
         anchors[i].draw();
     }
     */
+    for(let i = 0; i < exits.length; i++){
+        if(exits[i].dir = "door"){
+            exits[i].draw();
+        }
+    }
     for(let i = 0; i < blocks.length; i++){
         blocks[i].draw();
     }
@@ -956,7 +995,6 @@ function resizeCanvas(){
     blockSize = Math.round(((innerWidth + innerHeight) / 2) / 20);
     for(let i = 0; i < particles.length; i++){
         particles[i].x = particleX[i] * blockSize;
-        debugText = particles[i].x
         particles[i].y = particleY[i] * blockSize;
         particles[i].radius = particleRadius[i] * blockSize;
     }
@@ -964,10 +1002,8 @@ function resizeCanvas(){
     rebuildLevel();
     player.width = blockSize;
     player.height = blockSize * 2;
-    debugText = particles.length;
     for(let i = 0; i < particles.length; i++){
         particles[i].x = particleX[i] * blockSize;
-        debugText = particles[i].x
         particles[i].y = particleY[i] * blockSize;
         particles[i].radius = particleRadius[i] * blockSize;
     }

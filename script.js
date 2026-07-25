@@ -984,7 +984,7 @@ function resizeCanvas(){
 function rebuildLevel(){
     clearBlocks();
     createBlocks();
-    levelWidth = levels[currentLevel].maap[0].length * blockSize;
+    levelWidth = levels[currentLevel].map[0].length * blockSize;
     levelHeight = levels[currentLevel].map.length * blockSize;
 }
 

@@ -216,6 +216,9 @@ let levels = {
     }
 };
 
+let playerImage = new Image();
+playerImage.src = "Images/ember_concept_small.png";
+
 
 class Player {
     constructor(x, y, width, height){
@@ -280,6 +283,7 @@ class Player {
         }
     } 
     draw(){
+        /*
         ctx.fillStyle = "red";
         ctx.fillRect(this.x - camera.x, this.y - camera.y, this.width, this.height);
         ctx.fillStyle = "rgb(255,255,255)";
@@ -292,6 +296,8 @@ class Player {
             ctx.fillStyle = "black";
             ctx.fillRect(this.x - camera.x + this.width / 10*6 + (this.width / 3 - this.width / 5 - this.width / 60), this.y - camera.y + this.height / 6 + this.width / 60, this.width / 5, this.width / 5);
         }
+            */
+           ctx.drawImage(playerImage, this.x - camera.x - blockSize / 20, this.y - camera.y - blockSize / 3, this.width * 1.2, this.height * 1.2);
     }
     update(){
         this.immobilityFrames--;

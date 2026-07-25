@@ -525,7 +525,7 @@ class Player {
                     this.canDash = true;
                     this.canDoubleJump = true;
                     for(let i = 0; i < 2; i++){
-                        particles.push(new Particle(player.x + player.width, player.y + blockSize / 8, blockSize / (Math.floor(Math.random() * 2) + 8), "rgb(184, 48, 21)", 0.8, "wall slide particle", -blockSize / (Math.floor(Math.random() * blockSize) + 5), -blockSize / (Math.floor(Math.random() * 7) + 6), 0.97, 0.97, Infinity, 0, 0, 0, 1.1, -0.1));
+                        particles.push(new Particle(player.x + player.width, player.y + blockSize / 1.8, blockSize / (Math.floor(Math.random() * 2) + 8), "rgb(184, 48, 21)", 0.8, "wall slide particle", -blockSize / (Math.floor(Math.random() * blockSize) + 5), -blockSize / (Math.floor(Math.random() * 7) + 6), 0.97, 0.97, Infinity, 0, 0, 0, 1.1, -0.1));
                     }
                     if(controls.space && this.jumpBuffer > 0 && this.immobilityFrames <= 0){
                         this.jumping = 0;
@@ -543,7 +543,7 @@ class Player {
                 this.canDoubleJump = true;
                 this.canDash = true;
                 for(let i = 0; i < 2; i++){
-                    particles.push(new Particle(player.x, player.y + blockSize / 8, blockSize / (Math.floor(Math.random() * 2) + 8), "rgb(184, 48, 21)", 0.8, "wall slide particle", blockSize / (Math.floor(Math.random() * blockSize) + 5), -blockSize / (Math.floor(Math.random() * 7) + 6), 0.97, 0.97, Infinity, 0, 0, 0, 1.1, -0.1));
+                    particles.push(new Particle(player.x, player.y + blockSize / 1.8, blockSize / (Math.floor(Math.random() * 2) + 8), "rgb(184, 48, 21)", 0.8, "wall slide particle", blockSize / (Math.floor(Math.random() * blockSize) + 5), -blockSize / (Math.floor(Math.random() * 7) + 6), 0.97, 0.97, Infinity, 0, 0, 0, 1.1, -0.1));
                 }
                 if(controls.space && this.jumpBuffer > 0){
                     this.jumping = 0;

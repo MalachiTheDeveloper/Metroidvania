@@ -533,7 +533,7 @@ class Player {
                     }
                     this.dir = "left";
                     this.dashDir = "left"
-            }
+            }   
             this.x-=2;
             if(checkBlockCollisions(this) && this.wallSlideActivated && this.immobilityFrames <= 0){
                 if(this.velocity.y > blockSize / 10){
